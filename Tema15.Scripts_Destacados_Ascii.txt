@@ -1,0 +1,826 @@
+  ************************************************************************************
+  *                      Scripts en archivos de texto del manual                     *
+  *                   "DE VISUAL BASIC SCRIPT A POWERSHELL SCRIPT"                   *
+  ************************************************************************************
+  ************************************************************************************
+  * OBJETO.........: Código fuente de los scripts mas destacados del tema            *
+  * Comentarios....: Este archivo facilita hacer un copia/pega que el manual en PDF  *
+  *                  puede dificultar.                                               *
+  * Título.........: De Visual Basic Script a PowerShell Script                      *
+  *                  (C) Francisco P. Carrión Fernández, Málaga 2017 - 2022.         *
+  *                  Registro de la propiedad intelectual en Safe Creative:          *
+  *                  https://www.safecreative.org                                    *
+  *                  Identificador 2106088048052                                     *
+  *                  Fecha registro 08-jun-2021 21:48 UTC                            *
+  * Original en....: https://formacionpacocarrion.wordpress.com                      *
+  * Contacto.......: formacion.paco.carrion@gmail.com                                *
+  * Licencia.......: La misma de la obra de procedencia: Licencia Creative Commons   *
+  *                  Attribution-NonCommercial-NoDerivatives 4.0                     * 
+  ************************************************************************************
+  *                                                     Paco Carrión, Málaga 2022.   *
+  ************************************************************************************
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+Set ObjServicioWMI = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
+Set Procesos = ObjServicioWMI.ExecQuery ("Select * FROM Win32_Process WHERE NAME LIKE 'W%'")
+For Each Proceso In Procesos
+   wscript.Echo "Nombre: " & Proceso.Name
+   wscript.Echo "- Prioridad: " & Proceso.Priority
+Next 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+$Procesos = Get-WMIObject -Query "SELECT * FROM Win32_Process WHERE NAME LIKE 'W%'"
+ForEach ($UnProceso in $Procesos){
+    Write-Host "Nombre: $($UnProceso.Name)"
+    Write-Host "- Prioridad: $($UnProceso.Priority)"
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+Set ObjServicioWMI = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
+Set Procesos = ObjServicioWMI.ExecQuery ("SELECT * FROM Win32_Process WHERE NAME ='Notepad.exe'")
+If Procesos.count > 0 Then
+    WScript.Echo "Se está ejecutando el Bloc de Notas."
+Else 
+    WScript.Echo "No se está ejecutando el Bloc de Notas."
+End If
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+$Procesos = Get-WMIObject -Query "SELECT * FROM Win32_Process WHERE NAME ='Notepad.exe'"
+if ($Procesos){
+    Write-Host "Se está ejecutando el Bloc de Notas."
+} else{
+    Write-Host "No se está ejecutando el Bloc de Notas."
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+$Procesos = Get-WMIObject -Class "Win32_Process" -Filter "NAME LIKE 'W%'"
+ForEach ($UnProceso in $Procesos){
+    Write-Host "Nombre: $($UnProceso.Name)"
+    Write-Host "- Prioridad: $($UnProceso.Priority)"
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+$Procesos = Get-CimInstance -Query "SELECT * FROM Win32_Process WHERE NAME ='Notepad.exe'"
+if ($Procesos){
+    Write-Host "Se está ejecutando el Bloc de Notas."
+} else{
+    Write-Host "No se está ejecutando el Bloc de Notas."
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+$Procesos = Get-CimInstance -Class "Win32_Process" -Filter "NAME LIKE 'W%'"
+ForEach ($UnProceso in $Procesos){
+    Write-Host "Nombre: $($UnProceso.Name)"
+    Write-Host "- Prioridad: $($UnProceso.Priority)"
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+Set ObjServicioCIM = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
+Set Procesos = ObjServicioCIM.ExecQuery ("SELECT * FROM Win32_Process WHERE NAME ='Notepad.exe'")
+For Each Proceso In Procesos
+    Resultado = Proceso.Terminate
+    If Resultado = 0 Then
+        WScript.Echo "El proceso Notepad ha finalizado."
+    End If 
+Next
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+$Procesos =Get-CimInstance -Query "SELECT * FROM Win32_Process WHERE NAME ='Notepad.exe'"
+ForEach($Proceso in $Procesos){
+    $Resultado = Invoke-CimMethod -InputObject $Proceso -MethodName Terminate
+    if ($Resultado.ReturnValue -eq 0) {
+         Write-Host "El proceso Notepad ha finalizado."
+     } 
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+Set ObjServicioCIM = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
+Set InfoProcesos = ObjServicioCIM.ExecQuery ("SELECT * From Win32_Process")
+For Each Info In InfoProcesos
+    For Each Propiedad In info.Properties_
+        WScript.Echo "Propiedad: [" & Propiedad.Name & "] - Valor: " & Propiedad.Value
+    Next
+    WScript.Echo ""
+Next
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+$InfoProcesos = Get-CimInstance -Query "SELECT * From Win32_Process"
+ForEach ($Info in $InfoProcesos){
+    ForEach($Propiedad in $Info.CimInstanceProperties){
+        Write-Host "[$($Propiedad.Name)] - Valor: $($Propiedad.Value)"
+    }
+    Write-Host
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+Set ObjServicioCIM = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
+Set InfoPlaca = ObjServicioCIM.ExecQuery ("SELECT * From Win32_Baseboard")
+For Each Info In InfoPlaca
+    WScript.Echo "Fabricante:      " & Info.Manufacturer
+    WScript.Echo "Número de Serie: " & Info.SerialNumber
+    WScript.Echo "Descripción:     " & Info.Description
+Next
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+$InfoPlaca = Get-CimInstance -Query "SELECT * From Win32_Baseboard"
+ForEach ($Info in $InfoPlaca){
+    Write-Host "Fabricante:      $($Info.Manufacturer)"
+    Write-Host "Número de Serie: $($Info.SerialNumber)"
+    Write-Host "Descripción:     $($Info.Description)"
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+Set ObjServicioCIM = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
+Set InfoBios = ObjServicioCIM.ExecQuery ("SELECT * From Win32_BIOS")
+For Each Info In InfoBios
+    WScript.Echo "Fabricante:     " & Info.Manufacturer
+    Wscript.Echo "Número de Serie: " & Info.SerialNumber
+    WScript.Echo "Descripción:     " & Info.Description
+Next
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+$InfoBios = Get-CimInstance -Query "SELECT * From Win32_BIOS"
+ForEach ($Info in $InfoBios){
+    Write-Host "Fabricante:      $($Info.Manufacturer)"
+    Write-Host "Número de Serie: $($Info.SerialNumber)"
+    Write-Host "Descripción:     $($Info.Description)"
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+Set ObjServicioCIM = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
+Set InfoEq = ObjServicioCIM.ExecQuery ("SELECT * From Win32_Computersystem")
+For Each Info In InfoEq
+    WScript.Echo "Procesadores:   " & Info.NumberOfProcessors
+    WScript.Echo "Memoria física: " & Info.TotalPhysicalMemory
+    WScript.Echo "Arquitectura:   " & Info.SystemType
+Next
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+$InfoEq = Get-CimInstance -Query "SELECT * From Win32_Computersystem"
+ForEach ($Info in $InfoEq){
+    Write-Host "Procesadores:   $($Info.NumberOfProcessors)"
+    Write-Host "Memoria física: $($Info.TotalPhysicalMemory)"
+    Write-Host "Arquitectura:   $($Info.SystemType)"
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+Set ObjServicioCIM = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
+Set InfoAR = ObjServicioCIM.ExecQuery ("SELECT * From Win32_NetworkAdapter")
+For Each Info In InfoAR
+    if Info.PhysicalAdapter Then 
+        Wscript.Echo "Nombre:           " & Info.Name
+        WScript.Echo "  Dirección MAC: " & Info.MACAddress
+        Wscript.Echo "  Fabricante:    " & Info.Manufacturer
+    End If 
+Next
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+$InfoAR = Get-CimInstance -Query "SELECT * From Win32_NetworkAdapter"
+ForEach ($Info in $InfoAR){
+    if ($Info.PhysicalAdapter){
+        Write-Host "Nombre:          $($Info.Name)"
+        Write-Host "  Dirección MAC: $($Info.MACAddress)"
+        Write-Host "  Fabricante:    $($Info.Manufacturer)"
+    }
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+Set ObjServicioCIM = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
+Set InfoAR = ObjServicioCIM.ExecQuery ("SELECT * From Win32_NetworkAdapterConfiguration WHERE IPEnabled = TRUE")
+For Each Info In InfoAR
+    Wscript.Echo "Nombre:          " & Info.Description
+    WScript.Echo "  Dirección MAC:  " & Info.MACAddress
+    WScript.Echo "  Dirección IP:   " & Join (Info.IPAddress," ")
+    WScript.Echo "  Servidor DHCP:  " & Info.DHCPServer
+Next
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+$InfoAR = Get-CimInstance -Query "SELECT * From Win32_NetworkAdapterConfiguration WHERE IPEnabled = TRUE"
+ForEach ($Info in $InfoAR){
+    Write-Host "Nombre:           $($Info.Description)"
+    Write-Host "  Dirección MAC:  $($Info.MACAddress)"
+    Write-Host "  Dirección IP:   $($Info.IPAddress)"
+    Write-Host "  Servidor DHCP:  $($Info.DHCPServer)" 
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+Set ObjServicioCIM = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
+Set InfoProtcolos = ObjServicioCIM.ExecQuery ("SELECT * From Win32_NetworkProtocol")
+For Each Info In InfoProtcolos
+    WScript.Echo "Nombre:              " & Info.Name
+    WScript.Echo "  Estado:            " & Info.Status
+    WScript.Echo "  Soporta Broadcast: " & Info.SupportsBroadcasting
+Next
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+$InfoProtcolos = Get-CimInstance -Query "SELECT * From Win32_NetworkProtocol"
+ForEach ($Info in $InfoProtcolos){
+    Write-Host "Nombre:                $($Info.Name)"
+    Write-Host "  Estado:              $($Info.Status)"
+    Write-Host "  Soporta Broadcast:   $($Info.SupportsBroadcasting)" 
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+Set ObjServicioCIM = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
+Set InfoSistema = ObjServicioCIM.ExecQuery ("SELECT * From Win32_OperatingSystem")
+For Each Info In InfoSistema
+    WScript.Echo "Sistema operativo:   " & Info.Caption
+    Wscript.Echo "  Versión:             " & Info.Version
+    WScript.Echo "  Tipo de producto:  " & Info.ProductType
+Next
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+$InfoSistema = Get-CimInstance -Query "SELECT * From Win32_OperatingSystem"
+ForEach ($Info in $InfoSistema){
+    Write-Host "Sistema operativo:   $($Info.Caption)"
+    Write-Host "  Versión:           $($Info.Version)"
+    Write-Host "  Tipo de producto:  $($Info.ProductType)" 
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+Set ObjServicioCIM = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
+ConsultaWQL  = "select * from Win32_OperatingSystem where Version like '10.0%' and ProductType='1'"
+Set InfoSistema = ObjServicioCIM.ExecQuery (ConsultaWQL)
+If InfoSistema.count > 0 Then
+    WScript.Echo "El sistema es Windows 10"
+Else
+    WScript.Echo "¡No es es Windows 10!"
+End If 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+$ConsultaWQL  = "select * from Win32_OperatingSystem where Version like '10.0%' and ProductType='1'"
+if ( Get-CimInstance -Query $ConsultaWQL) {
+    Write-Host "El sistema es Windows 10"
+} else {
+    Write-Host "¡No es es Windows 10!"
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+Set ObjServicioCIM = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
+ConsultaWQL  = "select * from Win32_OperatingSystem where Version like '6.1%' and ProductType='1'"
+Set InfoSistema = ObjServicioCIM.ExecQuery (ConsultaWQL)
+If InfoSistema.count > 0 Then
+    WScript.Echo "El sistema es Windows 7"
+Else
+    WScript.Echo "¡No es es Windows 7!"
+End If
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+$ConsultaWQL  = "select * from Win32_OperatingSystem where Version like '6.1%' and ProductType='1'"
+if ( Get-CimInstance -Query $ConsultaWQL) {
+    Write-Host "El sistema es Windows 7"
+} else {
+    Write-Host "¡No es es Windows 7!"
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+Set ObjServicioCIM = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
+ConsultaWQL  = "select * from Win32_OperatingSystem where Not(Version like '10.0%' and ProductType='1')"
+Set InfoSistema = ObjServicioCIM.ExecQuery (ConsultaWQL)
+If InfoSistema.count > 0 Then
+    WScript.Echo "El sistema es distinto de Windows 10"
+Else
+    WScript.Echo "¡El sistema es Windows 10!"
+End If
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+$ConsultaWQL  = "select * from Win32_OperatingSystem where Not (Version like '10.0%' and ProductType='1')"
+if (Get-CimInstance -Query $ConsultaWQL) {
+    Write-Host "El sistema es distinto de Windows 10"
+} else {
+    Write-Host "¡El sistema es Windows 10!"
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+Set ObjServicioCIM = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
+Set InfoImpr = ObjServicioCIM.ExecQuery ("SELECT * From Win32_Printer")
+For Each Info In InfoImpr
+    Wscript.Echo "Impresora:                  " & Info.DriverName
+    WScript.Echo "  Resolución horizontal: " & Info.HorizontalResolution
+    Wscript.Echo "  Compartida:               " & Info.Shared
+Next
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+$InfoImpr = Get-CimInstance -Query "SELECT * From Win32_Printer"
+ForEach ($Info in $InfoImpr){
+    Write-Host "Impresora:                $($Info.DriverName)"
+    Write-Host "  Resolución horizontal: $($Info.HorizontalResolution)"
+    Write-Host "  Compartida:             $($Info.Shared)" 
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+Set ObjServicioCIM = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
+Set InfoProcesador = ObjServicioCIM.ExecQuery ("SELECT * From Win32_Processor")
+For Each Info In InfoProcesador
+    WScript.Echo "Procesador:              " & Info.Name
+    WScript.Echo "  Velocidad reloj (MHz): " & Info.CurrentClockSpeed
+    WScript.Echo "  Núcleos:               " & Info.NumberOfCores
+Next
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+$InfoProcesador = Get-CimInstance -Query "SELECT * From Win32_Processor"
+ForEach ($Info in $InfoProcesador){
+    Write-Host "Procesador:              $($Info.Name)"
+    Write-Host "  Velocidad reloj (MHz): $($Info.CurrentClockSpeed)"
+    Write-Host "  Núcleos:               $($Info.NumberOfCores)" 
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+Set ObjServicioCIM = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
+ConsultaWQL  = "select * from Win32_Processor where AddressWidth='64'"
+Set InfoSistema = ObjServicioCIM.ExecQuery (ConsultaWQL)
+If InfoSistema.count > 0 Then
+    WScript.Echo "El sistema operativo es de 64 bits"
+Else
+    WScript.Echo "¡El sistema operativo no es de 64 bits!"
+End If
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+$ConsultaWQL  = "select * from Win32_Processor where AddressWidth='64'"
+if ( Get-CimInstance -Query $ConsultaWQL) {
+    Write-Host "El sistema operativo es de 64 bits"
+} else {
+    Write-Host "¡El sistema operativo no es de 64 bits!"
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+Set ObjServicioCIM = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
+Set InfoSoft = ObjServicioCIM.ExecQuery ("SELECT * From Win32_Product")
+For Each Info In InfoSoft
+    WScript.Echo "Software:       " & Info.Name
+    WScript.Echo "  Versión:      " & Info.Version
+    WScript.Echo "  Localización: " & Info.InstallLocation
+Next
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+$InfoSoft = Get-CimInstance -Query "SELECT * From Win32_Product"
+ForEach ($Info in $InfoSoft){
+    Write-Host "Software:       $($Info.Name)"
+    Write-Host "  Versión:      $($Info.Version)"
+    Write-Host "  Localización: $($Info.InstallLocation)" 
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+Set ObjServicioCIM = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
+Set InfoServicios = ObjServicioCIM.ExecQuery ("SELECT * From Win32_Service")
+For Each Info In InfoServicios
+    WScript.Echo "Denominación:        " & Info.Caption
+    WScript.Echo "  Línea de comandos: " & Info.PathName
+    WScript.Echo "  Tipo de inicio:    " & Info.StartMode
+Next
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+$InfoServicios = Get-CimInstance -Query "SELECT * From Win32_Service"
+ForEach ($Info in $InfoServicios){
+    Write-Host "Denominación:        $($Info.Caption)"
+    Write-Host "  Línea de comandos: $($Info.PathName)"
+    Write-Host "  Tipo de inicio:    $($Info.StartMode)" 
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+Set ObjServicioCIM = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
+Set LosServicios = ObjServicioCIM.ExecQuery ("SELECT * From Win32_Service where name='spooler'")
+For Each Servicio In LosServicios
+    Resultado = Servicio.StopService
+    If Resultado = 0 Then
+        WScript.Echo "El servicio de Cola de Impresión se ha DETENIDO."
+    Else
+        If Servicio.StartService = 0 Then
+           WScript.Echo "El servicio de Cola de Impresión se ha INICIADO."
+        End If
+    End If
+Next
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+$LosServicios = Get-CimInstance -Query "SELECT * From Win32_Service where name='spooler'"
+ForEach($Servicio in $LosServicios){
+    $Resultado = Invoke-CimMethod -InputObject $Servicio -MethodName StopService
+    if ($Resultado.ReturnValue -eq 0) {
+        Write-Host "El servicio de Cola de Impresión se ha DETENIDO."
+    } else{
+        if ((Invoke-CimMethod -InputObject $Servicio -MethodName StartService).ReturnValue -eq 0) {
+            Write-Host "El servicio de Cola de Impresión se ha INICIADO."
+        }
+    }
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+Set ObjServicioCIM = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
+Set InfoRecursos = ObjServicioCIM.ExecQuery ("SELECT * From Win32_Share")
+For Each Info In InfoRecursos
+    Wscript.Echo "Nombre:               " & Info.Name
+    Wscript.Echo "  Ruta:             " & Info.Path
+    WScript.Echo "  Descripción:       " & Info.Description
+Next
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+$InfoRecursos = Get-CimInstance -Query "SELECT * From Win32_Share"
+ForEach ($Info in $InfoRecursos){
+    Write-Host "Nombre:              $($Info.Name)"
+    Write-Host "  Ruta:              $($Info.Path)"
+    Write-Host "  Descripción:       $($Info.Description)" 
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+Set ObjServicioWMI = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
+Set Recursos = ObjServicioWMI.Get("Win32_Share")
+If Recursos.Create("C:\Windows","NuevoRecurso",0) = 0 Then
+    WScript.Echo "Se ha creado el recurso compartido"
+End If
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+$Recursos = [WMICLASS]"WIN32_Share"
+if  ($Recursos.Create("C:\Windows","NuevoRecurso",0).ReturnValue -eq 0){
+    Write-Host "Se ha creado el recurso compartido"
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+Set ObjServicioWMI = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
+Set LosRecursos = ObjServicioWMI.ExecQuery ("SELECT * From Win32_Share Where Name='NuevoRecurso' ")
+For Each Recurso In LosRecursos
+    If Recurso.Delete = 0 Then
+        WScript.Echo "Se ha borrado el recurso compartido"
+    End If    
+Next
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+$LosRecursos = Get-WMIObject -Query "SELECT * From Win32_Share Where Name='NuevoRecurso' "
+ForEach ($Recurso in $LosRecursos){
+    if ($Recurso.Delete().ReturnValue -eq 0){
+        Write-Host "Se ha borrado el recurso compartido"
+    }
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+Set ObjServicioCIM = GetObject("winmgmts:" & "{impersonationLevel=impersonate}!\\.\root\cimv2")
+Set InfoVolumenes = ObjServicioCIM.ExecQuery ("SELECT * From Win32_Volume")
+For Each Info In InfoVolumenes
+    WScript.Echo "Nombre:                  " & Info.Name
+    WScript.Echo "  Capacidad (Bytes):     " & Info.Capacity
+    WScript.Echo "  Espacio libre (Bytes): " & Info.FreeSpace
+    WScript.Echo "  Sistema de archivos:   " & Info.FileSystem
+Next
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema15   |
++============+==================================================================================fpcf===\
+$InfoVolumenes = Get-CimInstance -Query "SELECT * From Win32_Volume"
+ForEach ($Info in $InfoVolumenes){
+    Write-Host "Nombre:                  $($Info.Name)"
+    Write-Host "  Capacidad (Bytes):     $($Info.Capacity)"
+    Write-Host "  Espacio libre (Bytes): $($Info.FreeSpace)"
+    Write-Host "  Sistema de archivos:   $($Info.FileSystem)" 
+}
++======================================================================================================/

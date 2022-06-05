@@ -1,0 +1,778 @@
+  ************************************************************************************
+  *                      Scripts en archivos de texto del manual                     *
+  *                   "DE VISUAL BASIC SCRIPT A POWERSHELL SCRIPT"                   *
+  ************************************************************************************
+  ************************************************************************************
+  * OBJETO.........: Código fuente de los scripts mas destacados del tema            *
+  * Comentarios....: Este archivo facilita hacer un copia/pega que el manual en PDF  *
+  *                  puede dificultar.                                               *
+  * Título.........: De Visual Basic Script a PowerShell Script                      *
+  *                  (C) Francisco P. Carrión Fernández, Málaga 2017 - 2022.         *
+  *                  Registro de la propiedad intelectual en Safe Creative:          *
+  *                  https://www.safecreative.org                                    *
+  *                  Identificador 2106088048052                                     *
+  *                  Fecha registro 08-jun-2021 21:48 UTC                            *
+  * Original en....: https://formacionpacocarrion.wordpress.com                      *
+  * Contacto.......: formacion.paco.carrion@gmail.com                                *
+  * Licencia.......: La misma de la obra de procedencia: Licencia Creative Commons   *
+  *                  Attribution-NonCommercial-NoDerivatives 4.0                     * 
+  ************************************************************************************
+  *                                                     Paco Carrión, Málaga 2022.   *
+  ************************************************************************************
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+Set ObjWMI = GetObject( "winmgmts:\\.\root\cimv2" )
+Set InfoEquipo = ObjWMI.ExecQuery( "Select * from Win32_ComputerSystem", , 48 )
+For Each Elemento in InfoEquipo
+    NombreDominio = Elemento.Domain
+    UnidoADominio = Elemento.PartOfDomain
+    If UnidoADominio Then
+        WScript.Echo "Equipo unido a un dominio: " & NombreDominio
+    Else
+        WScript.Echo "No está unido a un dominio: " & NombreDominio
+    End If
+Next
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+$UnidoADominio = (Get-WmiObject win32_computersystem).PartOfDomain
+$NombreDominio = (Get-WmiObject win32_computersystem).Domain
+if ($UnidoADominio -eq $true) {
+    write-host "Equipo unido a un dominio: $NombreDominio"
+} 
+else {
+    write-host "No está unido a un dominio:  $NombreDominio"
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+Set ObjWMI = GetObject( "winmgmts:\\.\root\cimv2" )
+Set InfoEquipo = ObjWMI.ExecQuery( "Select * from Win32_ComputerSystem", , 48 )
+For Each Elemento in InfoEquipo
+    RolDeDominio = Elemento.DomainRole
+    Select Case RolDeDominio
+        Case 0 Wscript.Echo "Equipo independiente"
+        Case 1 WScript.Echo "Equipo miembro"
+        Case 2 Wscript.Echo "Servidor independiente"
+        Case 3 Wscript.Echo "Servidor miembro"
+        Case 4 WScript.Echo "BDC Controlador secundario"
+        Case 5 WScript.Echo "PDC Controlador primario"
+    End Select
+  
+Next
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+$RolDeDominio = (Get-WmiObject win32_computersystem).DomainRole 
+Switch ($RolDeDominio)
+{
+    0 {Write-Host 'Equipo independiente'}
+    1 {Write-Host 'Equipo miembro'}
+    2 {Write-Host 'Servidor independiente'}
+    3 {Write-Host 'Servidor miembro'}
+    4 {Write-Host 'BDC Controlador secundario'}
+    5 {Write-Host 'PDC Controlador primario'}
+} 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+Set Comando = CreateObject("ADODB.Command")
+Set Conexion = CreateObject("ADODB.Connection")
+Conexion.Provider = "ADsDSOObject"
+Conexion.Open "Active Directory Provider"
+Set Comando.ActiveConnection = Conexion
+Set ObjetoRootDSE = GetObject("LDAP://RootDSE")
+Dominio = ObjetoRootDSE.Get("defaultNamingContext")
+Comando.CommandText = "<LDAP://" & Dominio & ">;(&(objectCategory=person)" _ 
+                    & "(objectClass=user));name, distinguishedName ;subtree"
+Comando.Properties("Page Size") = 100
+Set Recordset = Comando.Execute
+Do Until Recordset.EOF
+    WScript.echo Recordset.Fields("Name").Value
+    WScript.echo " - " & Recordset.Fields("distinguishedName").value
+    Recordset.MoveNext
+Loop
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+$Conexion = New-Object -comObject "ADODB.Connection"
+$Comando = New-Object -comObject "ADODB.Command"
+$Conexion.Open("Provider=ADsDSOObject;")
+$Comando.ActiveConnection = $Conexion
+$Comando.CommandText = "Select name, distinguishedName  from 'LDAP://RootDSE '" `
+                     + " where objectCategory='user'"
+$RecordSet = $Comando.Execute()
+While (!$RecordSet.eof){
+    Write-Host $RecordSet.Fields.item("name").Value
+    Write-Host  $(" - " +$RecordSet.Fields.item("distinguishedName").Value)
+    $RecordSet.MoveNext()
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+Set Root = GetObject("LDAP://rootDSE")
+Dominio = Root.Get("defaultNamingContext")
+Set RutaAD = GetObject("LDAP://CN=Users," & Dominio) 
+Set ObjetoADSI = RutaAD.Create("User", "cn=" & "NuevoUsuario")
+ObjetoADSI.Put "sAMAccountName", "nuevousuario"
+ObjetoADSI.Put "UserPrincipalName", "nuevousuario"
+ObjetoADSI.SetInfo
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+$Root = [ADSI]"LDAP://RootDSE"
+$Dominio = $Root.Get("rootDomainNamingContext")
+$RutaAD= [ADSI]"LDAP://cn=users,$Dominio"
+$ObjetoADSI=$RutaAD.Create("user", "cn=" + "NuevoUsuario")
+$ObjetoADSI.Put("sAMAccountName", "nuevousuario")
+$ObjetoADSI.Put("UserPrincipalName", "nuevousuario")
+$ObjetoADSI.SetInfo() 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+Set UsuarioAD = GetObject("LDAP://CN=Administrador,CN=Users,DC=DOM2000") 
+WScript.Echo UsuarioAD.sAMAccountName
+WScript.Echo UsuarioAD.description
+WScript.Echo UsuarioAD.Mail
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+$UsuarioAD = [ADSI]"LDAP://cn=Administrador,cn=Users,dc=DOM2000"
+Write-Host $UsuarioAD.sAMAccountName
+Write-Host $UsuarioAD.description
+Write-Host $UsuarioAD.Mail 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+Set UsuarioAD = GetObject("LDAP://cn=NuevoUsuario,cn=Users,dc=DOM2000")
+UsuarioAD.Put "Mail", "correo.corporativo@dom200.com"
+UsuarioAD.Put "Description", "Nueva Descripción de usuario"
+UsuarioAD.SetInfo()
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+$UsuarioAD = [ADSI]"LDAP://cn=NuevoUsuario,cn=Users,dc=DOM2000"
+$UsuarioAD.Put("Mail", "correo.corporativo@dom200.com")
+$UsuarioAD.Put("Description", "Nueva Descripción de usuario")
+$UsuarioAD.SetInfo() 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+On Error Resume Next 
+Set UsuarioAD = GetObject("LDAP://cn=NuevoUsuario,cn=Users,dc=DOM2000")
+if Err.Number = 0 Then
+    WScript.Echo "Se borra el usuario " & UsuarioAD.distinguishedname
+    UsuarioAD.DeleteObject(0)
+Else
+    WScript.Echo "No existe el usuario"
+End If 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+$UsuarioAD = [ADSI]"LDAP://cn=NuevoUsuario,cn=Users,dc=DOM2000"
+if ($UsuarioAD.distinguishedname){
+    Write-Host "Se borra el usuario $($UsuarioAD.distinguishedname)"
+    $UsuarioAD.DeleteObject(0)
+} else{
+    Write-Host "No existe el usuario"
+} 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+Set Comando = CreateObject("ADODB.Command")
+Set Conexion = CreateObject("ADODB.Connection")
+Conexion.Provider = "ADsDSOObject"
+Conexion.Open "Active Directory Provider"
+Set Comando.ActiveConnection = Conexion
+Set ObjetoRootDSE = GetObject("LDAP://RootDSE")
+Dominio = ObjetoRootDSE.Get("defaultNamingContext")
+Comando.CommandText = "<LDAP://" & Dominio & ">;(&(objectCategory=OrganizationalUnit)" _ 
+                    & "(objectClass=OrganizationalUnit));name, distinguishedName ;subtree"
+Comando.Properties("Page Size") = 100
+Set Recordset = Comando.Execute
+Do Until Recordset.EOF
+    WScript.echo Recordset.Fields("Name").Value
+    WScript.echo " - " & Recordset.Fields("distinguishedName").value
+    Recordset.MoveNext
+Loop
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+$Conexion = New-Object -comObject "ADODB.Connection"
+$Comando = New-Object -comObject "ADODB.Command"
+$Conexion.Open("Provider=ADsDSOObject;")
+$Comando.ActiveConnection = $Conexion
+$Comando.CommandText = "Select name, distinguishedName from 'LDAP://RootDSE '" `
+                     + " where objectCategory='OrganizationalUnit'"
+$RecordSet = $Comando.Execute()
+While (!$RecordSet.eof){
+    Write-Host $RecordSet.Fields.item("name").Value
+    Write-Host  $(" - " +$RecordSet.Fields.item("distinguishedName").Value)
+    $RecordSet.MoveNext()
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+Set Root = GetObject("LDAP://rootDSE")
+Dominio = Root.Get("defaultNamingContext")
+Set RutaAD = GetObject("LDAP://" & Dominio) 
+Set ObjetoADSI = RutaAD.Create("OrganizationalUnit", "ou=" & "NuevaUnidad")
+ObjetoADSI.Put "Description", "Unidad organizativa del ejemplo."
+ObjetoADSI.Put "st", "Málaga"
+ObjetoADSI.SetInfo
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+$Root = [ADSI]"LDAP://RootDSE"
+$Dominio = $Root.Get("rootDomainNamingContext")
+$RutaAD= [ADSI]"LDAP://$Dominio"
+$ObjetoADSI=$RutaAD.Create("OrganizationalUnit", "ou=" + "NuevaUnidad")
+$ObjetoADSI.Put("Description", "Unidad organizativa del ejemplo.")
+$ObjetoADSI.Put("st", "Málaga")
+$ObjetoADSI.SetInfo()
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+Set UnidadAD = GetObject("LDAP://ou=NuevaUnidad,DC=DOM2000") 
+WScript.Echo UnidadAD.st
+WScript.Echo UnidadAD.description
+WScript.Echo UnidadAD.whenCreated
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+$UnidadAD = [ADSI]"LDAP://ou=NuevaUnidad,dc=DOM2000"
+Write-Host $UnidadAD.st
+Write-Host $UnidadAD.description
+Write-Host $UnidadAD.whenCreated
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+Set UnidadAD = GetObject("LDAP://ou=NuevaUnidad,DC=DOM2000")
+UnidadAD.Put "l", "Ciudad Modificada"
+UnidadAD.Put "street", "Nombre de la calle"
+UnidadAD.SetInfo()
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+$UnidadAD = [ADSI]"LDAP://ou=NuevaUnidad,dc=DOM2000"
+$UnidadAD.Put("l", "Ciudad Modificada")
+$UnidadAD.Put("street", "Nombre de la calle")
+$UnidadAD.SetInfo() 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+On Error Resume Next 
+Set UnidadAD = GetObject("LDAP://ou=NuevaUnidad,DC=DOM2000")
+if Err.Number = 0 Then
+    WScript.Echo "Se borra La OU " & UnidadAD.distinguishedname
+    UnidadAD.DeleteObject(0)
+Else
+    WScript.Echo "No existe la OU"
+End If 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+$UnidadAD = [ADSI]"LDAP://ou=NuevaUnidad,dc=DOM2000"
+if ($UnidadAD.distinguishedname){
+    Write-Host "Se borra La OU $($UnidadAD.distinguishedname)"
+    $UnidadAD.DeleteObject(0)
+} else{
+    Write-Host "No existe la OU"
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+Set Comando = CreateObject("ADODB.Command")
+Set Conexion = CreateObject("ADODB.Connection")
+Conexion.Provider = "ADsDSOObject"
+Conexion.Open "Active Directory Provider"
+Set Comando.ActiveConnection = Conexion
+Set ObjetoRootDSE = GetObject("LDAP://RootDSE")
+Dominio = ObjetoRootDSE.Get("defaultNamingContext")
+Comando.CommandText = "<LDAP://" & Dominio & ">;(&(objectCategory=computer)" _ 
+                    & "(objectClass=computer));name, distinguishedName ;subtree"
+Comando.Properties("Page Size") = 100
+Set Recordset = Comando.Execute
+Do Until Recordset.EOF
+    WScript.echo Recordset.Fields("Name").Value
+    WScript.echo " - " & Recordset.Fields("distinguishedName").value
+    Recordset.MoveNext
+Loop
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+$Conexion = New-Object -comObject "ADODB.Connection"
+$Comando = New-Object -comObject "ADODB.Command"
+$Conexion.Open("Provider=ADsDSOObject;")
+$Comando.ActiveConnection = $Conexion
+$Comando.CommandText = "Select name, distinguishedName from 'LDAP://RootDSE '" `
+                     + " where objectCategory='computer'"
+$RecordSet = $Comando.Execute()
+While (!$RecordSet.eof){
+    Write-Host $RecordSet.Fields.item("name").Value
+    Write-Host  $(" - " +$RecordSet.Fields.item("distinguishedName").Value)
+    $RecordSet.MoveNext()
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+Set Root = GetObject("LDAP://rootDSE")
+Dominio = Root.Get("defaultNamingContext")
+Set RutaAD = GetObject("LDAP://CN=Computers," & Dominio) 
+Set ObjetoADSI = RutaAD.Create("Computer", "cn=" & "NuevoEquipo")
+ObjetoADSI.Put "Description", "Equipo de ejemplo."
+ObjetoADSI.Put "sAMAccountName", "NuevoEquipo"
+ObjetoADSI.SetInfo
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+$Root = [ADSI]"LDAP://RootDSE"
+$Dominio = $Root.Get("rootDomainNamingContext")
+$RutaAD= [ADSI]"LDAP://cn=computers,$Dominio"
+$ObjetoADSI=$RutaAD.Create("Computer", "cn=" + "NuevoEquipo")
+$ObjetoADSI.Put("Description", "Equipo de ejemplo.")
+$ObjetoADSI.Put("sAMAccountName", "NuevoEquipo")
+$ObjetoADSI.SetInfo() 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+Set EquipoAD = GetObject("LDAP://CN=NuevoEquipo,CN=Computers,DC=DOM2000") 
+WScript.Echo EquipoAD.DistinguishedName
+WScript.Echo EquipoAD.description
+WScript.Echo EquipoAD.whenCreated
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+$EquipoAD = [ADSI]"LDAP://CN=NuevoEquipo,CN=Computers,DC=DOM2000"
+Write-Host $EquipoAD.DistinguishedName
+Write-Host $EquipoAD.description
+Write-Host $EquipoAD.whenCreated
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+Set EquipoAD = GetObject("LDAP://CN=NuevoEquipo,CN=Computers,DC=DOM2000")
+EquipoAD.Put "description", "Nueva descripción de equipo"
+EquipoAD.Put "wWWHomePage", "www.pacocarrion.com"
+EquipoAD.SetInfo()
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+$EquipoAD = [ADSI]"LDAP://CN=NuevoEquipo,CN=Computers,DC=DOM2000"
+$EquipoAD.Put("description", "Nueva descripción de equipo")
+$EquipoAD.Put("wWWHomePage", "www.pacocarrion.com")
+$EquipoAD.SetInfo()
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+On Error Resume Next 
+Set EquipoAD = GetObject("LDAP://CN=NuevoEquipo,CN=Computers,DC=DOM2000")
+if Err.Number = 0 Then
+    WScript.Echo "Se borra el equipo " & EquipoAD.distinguishedname
+    EquipoAD.DeleteObject(0)
+Else
+    WScript.Echo "No existe el equipo"
+End If 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+$EquipoAD = [ADSI]"LDAP://CN=NuevoEquipo,CN=Computers,DC=DOM2000"
+if ($EquipoAD.distinguishedname){
+    Write-Host "Se borra el equipo $($EquipoAD.distinguishedname)"
+    $EquipoAD.DeleteObject(0)
+} else{
+    Write-Host "No existe el equipo"
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+Set UsuarioAD = GetObject("LDAP://CN=Administrador,CN=Users,DC=DOM2000") 
+For Each grupo In UsuarioAD.MemberOf
+    SoloGrupo = Split(Grupo,",")
+    WScript.Echo Replace(SoloGrupo(0),"CN=","")
+Next
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+$UsuarioAD = [ADSI]"LDAP://cn=Administrador,cn=Users,dc=DOM2000"
+ForEach ($grupo in $UsuarioAD.MemberOf){
+    $SoloGrupo = $Grupo.Split(",")
+    Write-Host $SoloGrupo[0].replace("CN=","")
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+set UnidadDestino = GetObject("LDAP://OU=Empresa,DC=DOM2000")
+UnidadDestino.MoveHere "LDAP://CN=NuevoEquipo,CN=Computers,DC=DOM2000",  _
+                           "CN=NuevoEquipo"
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+$UnidadDestino = [ADSI]"LDAP://OU=Empresa,DC=DOM2000"
+$UnidadDestino.MoveHere("LDAP://CN=NuevoEquipo,CN=Computers,DC=DOM2000", `
+                        "CN=NuevoEquipo") | Out-Null
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+Set Comando = CreateObject("ADODB.Command")
+Set Conexion = CreateObject("ADODB.Connection")
+Conexion.Provider = "ADsDSOObject"
+Conexion.Open "Active Directory Provider"
+Set Comando.ActiveConnection = Conexion
+Set ObjetoRootDSE = GetObject("LDAP://RootDSE")
+Dominio = ObjetoRootDSE.Get("defaultNamingContext")
+Comando.CommandText = "<LDAP://" & Dominio & ">;(&(objectCategory=computer)" _ 
+                    & "(objectClass=computer));name, distinguishedName, msDS-isGC ;subtree"
+Comando.Properties("Page Size") = 100
+Set Recordset = Comando.Execute
+Do Until Recordset.EOF
+    If Recordset.Fields("msDS-isGC").Value = True Then
+        WScript.echo "Catálogo Global: " & Recordset.Fields("Name").Value
+     End If 
+    Recordset.MoveNext
+Loop
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+$Conexion = New-Object -comObject "ADODB.Connection"
+$Comando = New-Object -comObject "ADODB.Command"
+$Conexion.Open("Provider=ADsDSOObject;")
+$Comando.ActiveConnection = $Conexion
+$Comando.CommandText = "Select name, distinguishedName, msDS-isGC from 'LDAP://RootDSE '" `
+                     + " where objectCategory='computer'"
+$RecordSet = $Comando.Execute()
+While (!$RecordSet.eof){
+    if ($RecordSet.Fields.item("msDS-isGC").Value -eq $True){
+        Write-Host  $("Catálogo Global: " +$RecordSet.Fields.item("name").Value)
+    }
+    $RecordSet.MoveNext()
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+$Usuarios = Get-ADUser Administrador -Properties whenChanged,whenCreated
+ForEach ($Usuario in $Usuarios){
+    Write-Host $Usuario.DistinguishedName
+    Write-Host $Usuario.whenCreated
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+$Usuarios = Get-ADUser -Filter 'Name -like "*"' -Properties whenCreated
+ForEach ($Usuario in $Usuarios){
+    Write-Host $Usuario.DistinguishedName
+    Write-Host $Usuario.whenCreated
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+$Usuarios = Get-ADUser -Filter * -Properties *
+ForEach ($usuario in $Usuarios){
+    Write-Host $Usuario.DistinguishedName
+    Write-Host $Usuario.whenCreated
+    Write-Host $Usuario.mail
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+$Equipos = Get-ADComputer -Filter * -Properties *
+ForEach ($Equipo in $Equipos){
+    Write-Host $Equipo.DistinguishedName
+    Write-Host $Equipo.whenCreated
+    Write-Host $Equipo.OperatingSystem
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+$Controladores = Get-ADDomainController -Filter *
+ForEach ($Controlador in $Controladores){
+    Write-Host "Nombre del Host:  $($Controlador.HostName)"
+    Write-Host "Roles de AD:      $($Controlador.OperationMasterRoles)"
+    Write-Host "Catálogo Global:  $($Controlador.IsGlobalCatalog)"
+    Write-Host "Sist. Operativo:  $($Controlador.OperatingSystem)"
+    Write-Host
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema14   |
++============+==================================================================================fpcf===\
+$ObjetosAD = Get-ADObject -filter * -Properties *
+ForEach ($ObjetoAD in $ObjetosAD){
+    Write-Host "Nombre:              $($ObjetoAD.Name)"
+    Write-Host "Tipo de Objeto:      $($ObjetoAD.ObjectClass)"
+    Write-Host "Nombre distinguido:  $($ObjetoAD.DistinguishedName)"
+    Write-Host
+}
++======================================================================================================/

@@ -1,0 +1,528 @@
+  ************************************************************************************
+  *                      Scripts en archivos de texto del manual                     *
+  *                   "DE VISUAL BASIC SCRIPT A POWERSHELL SCRIPT"                   *
+  ************************************************************************************
+  ************************************************************************************
+  * OBJETO.........: Código fuente de los scripts mas destacados del tema            *
+  * Comentarios....: Este archivo facilita hacer un copia/pega que el manual en PDF  *
+  *                  puede dificultar.                                               *
+  * Título.........: De Visual Basic Script a PowerShell Script                      *
+  *                  (C) Francisco P. Carrión Fernández, Málaga 2017 - 2022.         *
+  *                  Registro de la propiedad intelectual en Safe Creative:          *
+  *                  https://www.safecreative.org                                    *
+  *                  Identificador 2106088048052                                     *
+  *                  Fecha registro 08-jun-2021 21:48 UTC                            *
+  * Original en....: https://formacionpacocarrion.wordpress.com                      *
+  * Contacto.......: formacion.paco.carrion@gmail.com                                *
+  * Licencia.......: La misma de la obra de procedencia: Licencia Creative Commons   *
+  *                  Attribution-NonCommercial-NoDerivatives 4.0                     * 
+  ************************************************************************************
+  *                                                     Paco Carrión, Málaga 2022.   *
+  ************************************************************************************
+
+
+
++============+
+| Ejemplos   |
++============+==================================================================================fpcf===\
+# +----------------------------------------------------------------------------
+# | Script PowerShell: Formulario para cálculo del NIF
+# +----------------------------------------------------------------------------
+# | DESCRIPCIÓN...: Se presenta un formulario con un campo de texto en el que
+# |                 se teclea el número del NIF, y a la derecha se muestra
+# |                 de manera automática la letra del NIF.
+# | Fecha Creación: 4/FEB/2021
+# | Modificaciones: 9/FEB/2021 Se limpia el código y se añaden comentarios
+# +--------------------------------------------------------------Paco Carrión-- 
+
+# Definimos las tablas con las letras del NIF y las teclas numéricas 
+$LetraNIF = "T","R","W","A","G","M","Y","F","P","D","X","B","N","J","Z","S","Q","V","H","L","C","K","E"
+$TelasSoloNumeros = "0","1","2","3","4","5","6","7","8","9"
+
+
+# ············································································
+# Se definen los elementos y propiedades del formulario.
+# ············································································
+Add-Type -AssemblyName System.Windows.Forms
+[System.Windows.Forms.Application]::EnableVisualStyles()
+
+$Formulario1                     = New-Object system.Windows.Forms.Form
+$Formulario1.ClientSize          = New-Object System.Drawing.Point(285,72)
+$Formulario1.text                = "Cálculo del NIF en PowerShell"
+$Formulario1.StartPosition       = 1
+
+$NumeroNif                       = New-Object system.Windows.Forms.TextBox
+$NumeroNif.multiline             = $false
+$NumeroNif.width                 = 201
+$NumeroNif.height                = 20
+$NumeroNif.location              = New-Object System.Drawing.Point(10,20)
+$NumeroNif.TextAlign             = 2
+
+$Etiqueta1                       = New-Object system.Windows.Forms.Label
+$Etiqueta1.text                  = "---"
+$Etiqueta1.AutoSize              = $true
+$Etiqueta1.width                 = 25
+$Etiqueta1.height                = 10
+$Etiqueta1.BackColor             = [System.Drawing.Color]::FromArgb(255,255,235,205)
+$Etiqueta1.location              = New-Object System.Drawing.Point(238,20)
+$Etiqueta1.TextAlign             = 2
+
+$Formulario1.controls.AddRange(@($NumeroNif,$Etiqueta1))
+
+
+# ············································································
+# Este evento del campo de texto se ejecuta siempre que cambie su contenido.
+# ············································································
+$NumeroNif.Add_TextChanged({
+    
+    # Se eliminan todos los caracteres que no no estén permitidos.
+    $CadenaCorrecta = ""
+    Write-Host "Longitud: $($NumeroNif.TextLength)"
+    for ($PosicionLetra = 0; $PosicionLetra -lt $($NumeroNif.TextLength); $PosicionLetra ++){
+        Write-Host $NumeroNif.Text.Substring($PosicionLetra,1)
+        if ($TelasSoloNumeros -contains $($NumeroNif.Text.Substring($PosicionLetra,1))){
+            $CadenaCorrecta += $NumeroNif.Text.Substring($PosicionLetra,1)
+        }
+    }
+    Write-Host  $CadenaCorrecta
+
+    # Impide que se consideren números de NIF con mas de 8 digitos
+    if ($CadenaCorrecta.Length -gt 8){$CadenaCorrecta = $CadenaCorrecta.Substring(0,8)}
+
+    # Nos aseguramos que el cursor quede en mismo lugar en que estaba al modificar.
+    $PosicionCursor = $NumeroNif.SelectionStart
+    $NumeroNif.Text = $CadenaCorrecta
+    $NumeroNif.SelectionStart = $PosicionCursor 
+    
+    # Calcula la letra del NIF. En caso de error muestra la cadena "Err"
+    try {
+        if ($($NumeroNif.Text).Length -gt 0){
+            $Etiqueta1.Text = $LetraNIF[[INT] $NumeroNif.Text % 23]
+        }else{
+            $Etiqueta1.Text = ""
+        }
+    } # end try
+    catch {$Etiqueta1.Text ="Err"}
+})
+
+# ············································································
+# Se ejecuta el código que abre y muestra el formulario
+# ············································································
+
+$Formulario1.ShowDialog()
++======================================================================================================/
+
+
+
+
+
++============+
+| Ejemplos   |
++============+==================================================================================fpcf===\
+# +----------------------------------------------------------------------------
+# | Script PowerShell: Envío de correos por Gmail
+# +----------------------------------------------------------------------------
+# | DESCRIPCIÓN...: Envía correos electrónicos por gmail utilizando un script
+# |                 de PowerShell
+# |                 
+# | Fecha Creación: 6 abril 2020
+# | Modificaciones: 14 febrero 2021
+# +--------------------------------------------------------------Paco Carrión-- 
+
+
+
+function EnviaCorreoGmail($Remitente,$Destinatario,$PalabraPaso,$Asunto, $ContenidoCuerpo, $Modalidad){
+# ············································································
+# · Función: EnviaCorreoGmail
+# ············································································
+# · DESCRIPCIÓN...: Envía un mensaje con gmail. Según la modalidad puede ser un mensaje 
+# ·                 en modo texto o html, y el cuerpo puede proceder del parámetro
+# ·                 o de un archivo de texto. Lo determina el parámetro MODALIDAD
+# ·                 Modalidad:
+# ·                  1 - Formato texto y Cuerpo contenido en el parámetro $ContenidoCuerpo
+# ·                  2 - Formato texto y Cuerpo el contenido del archivo indicado en $ContenidoCuerpo
+# ·                  3 - Formato HTML y Cuerpo contenido en el parámetro $ContenidoCuerpo
+# ·                  4 - Formato HTML y Cuerpo el contenido del archivo indicado en $ContenidoCuerpo
+# ·                 
+# · Sintaxis......: EnviaCorreoGmail $Remitente $Destinatario $PalabraPaso $Asunto  $ContenidoCuerpo $Modalidad
+# · Ejemplo.......: EnviaCorreoGmail "usuario@correo.com" "usuario@correo.com" "1234" "Asunto ejemplo" "c:\temp\texto.txt" 2
+# · Comentario....: El remitente ha de coincidir con el usuario que conecta con GMAIL.
+# · Dependencias..: 
+# · 
+# · Fecha Creación: 6 de abril de 2020
+# · Modificaciones: 14 de febrero 2021 Se añaden las modalidades (1 a 4)
+# ·                 Adecuación para Manual de PowerShell
+# ····························································Paco Carrión····
+
+
+    $ServidorSMTP = "smtp.gmail.com" 
+ 
+ 
+    $ObjetoMensaje = new-object Net.Mail.MailMessage 
+    $ObjetoSMTP = new-object Net.Mail.SmtpClient($ServidorSMTP) 
+    $ObjetoSMTP.EnableSsl = $true 
+    $ObjetoMensaje.From = "$Remitente"
+    $ObjetoMensaje.To.Add("$Destinatario")
+
+    # Para utilizar texto en formato UNICODE
+    # $ObjetoMensaje.BodyEncoding = [system.Text.Encoding]::Unicode 
+    # $ObjetoMensaje.SubjectEncoding = [system.Text.Encoding]::Unicode 
+
+    $ObjetoMensaje.BodyEncoding = [system.Text.Encoding]::Default 
+    $ObjetoMensaje.SubjectEncoding = [system.Text.Encoding]::Default 
+
+    if ($Modalidad -eq 1){
+        $ObjetoMensaje.IsBodyHTML = $false
+        $ObjetoMensaje.Body =  $ContenidoCuerpo
+    }
+
+
+    if ($Modalidad -eq 2){
+        $ObjetoMensaje.IsBodyHTML = $false
+        $ObjetoMensaje.Body = Get-Content $ContenidoCuerpo -Raw
+    }
+
+    if ($Modalidad -eq 3){
+        $ObjetoMensaje.IsBodyHTML = $true 
+        $ObjetoMensaje.Body =  $ContenidoCuerpo
+    }
+
+
+    if ($Modalidad -eq 4){
+        $ObjetoMensaje.IsBodyHTML = $true 
+        $ObjetoMensaje.Body = Get-Content $ContenidoCuerpo -Raw
+    }
+    
+    $ObjetoMensaje.Subject = $Asunto 
+    $ObjetoSMTP.Credentials = New-Object System.Net.NetworkCredential("$Remitente", "$PalabraPaso"); 
+    $ObjetoSMTP.Send($ObjetoMensaje)
+}
+
+
+# +----------------------------------------------------------------------------
+# | Código principal del script
+# +----------------------------------------------------------------------------
+Clear-Host
+$CorreoRemitente = "correo@gmail.com"      # Indicar dirección de correo del remitente
+$CorreoDestinatario = "correo@gmail.com"   # Indicar dirección de correo del destinatario
+$PalabraPaso = ""                          # Indicar contraseña de correo.
+
+$TextoCuerpo = "Prueba de correo en variable de texto"  + [char] (13) + [char] (10) +  "Línea de texto 1"
+EnviaCorreoGmail $CorreoRemitente $CorreoDestinatario $PalabraPaso  "Modalidad 1"  $TextoCuerpo 1
+
+
+"Ejemplo de cuerpo para el correo en un archivo de texto." | Out-File "c:\temp\texto.txt"
+EnviaCorreoGmail $CorreoRemitente $CorreoDestinatario $PalabraPaso  "Modalidad 2"  "c:\temp\texto.txt" 2
+
+$TextoCuerpo = "<h2> Prueba de correo en variable HTML</h2  <br> Línea de texto 1 <br> Línea de texto 2 <br>"
+EnviaCorreoGmail $CorreoRemitente $CorreoDestinatario $PalabraPaso  "Modalidad 3"  $TextoCuerpo  3
+
+
+"<h2> Prueba de correo en archivo HTML</h2  <br> Línea de texto 1 <br> Línea de texto 2 <br>" | Out-File "c:\temp\texto.txt"
+EnviaCorreoGmail $CorreoRemitente $CorreoDestinatario $PalabraPaso "Modalidad 4"  "c:\temp\texto.txt" 4
+ 
+
++======================================================================================================/
+
+
+
+
+
++============+
+| Ejemplos   |
++============+==================================================================================fpcf===\
+# +----------------------------------------------------------------------------
+# | Script PowerShell: Detecta codificación UNICODE
+# +----------------------------------------------------------------------------
+# | DESCRIPCIÓN...: Contiene una función que detecta en un archivo de texto
+# |                 que se le pasa como parámetro la codificación unicode.
+# |                 
+# | Fecha Creación: 16 febrero 2021
+# | Modificaciones: 
+# +--------------------------------------------------------------Paco Carrión-- 
+
+
+function CompruebaUnicode($RutaDeArchivo){
+# ·············································································
+# · Función: CompruebaUnicode($RutaDeArchivo)
+# ·············································································
+# · DESCRIPCIÓN...: Lee los primeros bytes del archivo y compruba su codificación
+# ·                 en UNICODE.               
+# · Sintaxis......: CompruebaUnicode($RutaDeArchivo)
+# · Ejemplo.......: CompruebaUnicode "C:\temp\texto1.txt"
+# · Comentario....: 
+# · Dependencias..: 
+# · 
+# · Fecha Creación: 17 febrero 2021
+# · Modificaciones: 
+# ·                 
+# ····························································Paco Carrión·····
+
+    # Se comprueba si existe el archivo
+    if (Test-Path $RutaDeArchivo){
+        $Cabecera = get-content $RutaDeArchivo -encoding byte -totalcount 4
+        Write-Host $Cabecera
+
+        # UTF-32 Little-endian  FF FE 00 00 - 255  254  0  0
+        if ($Cabecera[0] -eq 255 -and $Cabecera[1] -eq 254 -and $Cabecera[2] -eq 0 -and $Cabecera[3] -eq 0){
+            $CadenaResultado = "UTF-32 Little-endian"
+        } else{
+            # UTF-32 Big-endian 00 00 FE FF - 0  0  254  255
+            if ($Cabecera[0] -eq 0 -and $Cabecera[1] -eq 0 -and $Cabecera[2] -eq 254 -and $Cabecera[3] -eq 255){
+                $CadenaResultado = "UTF-32 Big-endian"
+            } else {
+                # UTF-16 Little-endian  FF FE - 255  254
+                if ($Cabecera[0] -eq 255 -and $Cabecera[1] -eq 254 ){
+                    $CadenaResultado = "UTF-16 Little-endian"
+                } else {
+                    # UTF-16 Big-endian FE FF - 254  255
+                    if ($Cabecera[0] -eq 254 -and $Cabecera[1] -eq 255 ){
+                        $CadenaResultado = "UTF-16 Big-endian"
+                    } else{
+                        # UTF-8 EF BB BF - 239 187 191
+                        if ($Cabecera[0] -eq 239 -and $Cabecera[1] -eq 187 -and $Cabecera[2] -eq 191){
+                            $CadenaResultado = "UTF-8"
+                        } else {
+                            $CadenaResultado = "Archivo sin cabecera UNICODE"
+                        }
+                    }
+                }
+            }           
+        }
+    } else {
+        $CadenaResultado = "No existe el archivo."
+    }
+    Return $CadenaResultado
+}    
+    
+# +----------------------------------------------------------------------------
+# | Código principal del script
+# +----------------------------------------------------------------------------
+
+CompruebaUnicode "C:\temp\texto1.txt"
++======================================================================================================/
+
+
+
+
+
++============+
+| Ejemplos   |
++============+==================================================================================fpcf===\
+# +----------------------------------------------------------------------------
+# | Script PowerShell: GPO_iNFORME_DIRECTIVAS
+# +----------------------------------------------------------------------------
+# | DESCRIPCIÓN...: Hace una copia de seguridad de las directivas de Active Directory
+# |                 a la carpeta DESCARGAS\GPO\COPIA y genera el informe HTML de
+# |                 cada una de ellas a la carpeta DESCARGAS\GPO\INFORME.
+# |                 Posteriormente imprime cada una de ellas por la impresora por
+# |                 defecto. Por ello si queremos almacenarlos en un archivo PDF
+# |                 utilizando impresoras del tipo PDFCREATOR o similar hemos de
+# |                 ponerla como predeterinada.
+# |                 Por ello tras la primera impresión se pide confirmación para
+# |                 seguir por si la impresora por defecto no es la correcta.
+# |                 
+# | Fecha Creación: 30 abril 2019 
+# | Modificaciones: febrero 2021 Adecuación y comentarios
+# +--------------------------------------------------------------Paco Carrión-- 
+
+Clear-Host
+Add-Type -AssemblyName System.Windows.Forms # Para carcar MessageBox
+# Se comprueban las rutas de las carpetas y si no existen, se crean. 
+# ----------------------------------------------------------------------    
+$RutaDeDisco = "$Env:USERPROFILE\Downloads\gpo"
+if (!(Test-Path($RutaDeDisco))){New-Item -ItemType Directory -Path $RutaDeDisco -Force:$true | Out-Null}
+if (!(Test-Path("$RutaDeDisco\copia"))){New-Item -ItemType Directory -Path "$RutaDeDisco\copia" -Force:$true | Out-Null}
+if (!(Test-Path("$RutaDeDisco\Informe"))){New-Item -ItemType Directory -Path "$RutaDeDisco\Informe" -Force:$true | Out-Null}
+
+# Hace una copia de seguridad de las directivas de grupo a una carpeta ubicada en DESCARGAS
+# ------------------------------------------------------------------------------------------
+Backup-Gpo -All -Path "$RutaDeDisco\copia"
+
+
+# Procesa cada una de las directivas del dominio al que está unido el equipo
+# --------------------------------------------------------------------------
+$ObjetoIE = new-object -com "InternetExplorer.Application"
+$Contador = 1
+(Get-GPO -All ).displayname | Sort-Object | ForEach-Object {
+    Write-Host "$Contador - $_"
+
+    # Exporta la directiva de grupo a una carpeta en formato HTML
+    # ----------------------------------------------------------------------
+    Get-GPOReport -Name $_ -ReportType html -Path "$RutaDeDisco\Informe\$_.html"
+
+    # Se crea un objeto IE (Internet Explorer) para imprimir el HTML
+    # ----------------------------------------------------------------------
+    $ObjetoIE = new-object -com InternetExplorer.Application
+    $ObjetoIE.Visible = $false 
+    $ObjetoIE.Navigate("$RutaDeDisco\Informe\$_.html")
+
+    # Se hace una pausa para dar tiempo a la grabación y carga del HTML.
+    # Esto podría controlarse con las instrucciones de control de errores.
+    # ----------------------------------------------------------------------
+    Start-Sleep -second 10
+
+    # Se imprime el archivo cargado en IE
+    # ----------------------------------------------------------------------
+    $ObjetoIE.ExecWB(6,2)
+    Write-Host "    Imprimiendo: $Contador - $_"
+
+    # Se hace una pausa para dar tiempo a la impresora PDF para que procese la impresión.
+    # No da buen resultado hacerlo con instrucciones de control de errores ya que no da
+    # error, simplemente al cerrar el objeto IE la impresora ignora la impresión
+    # -------------------------------------------------------------------------------
+    Start-Sleep -second 10
+    while ( $ObjetoIE.busy ) {Write.host "Esperando busy. "; Start-Sleep -second 2 }
+    if ($Contador -eq 1) {
+        [System.Windows.Forms.MessageBox]::Show("Pulse Intro para SIGUIENTE ...")
+    }
+    $ObjetoIE.quit()
+    $Contador++
+} 
+[System.Windows.Forms.MessageBox]::Show("Pulse Intro para salir ...")
++======================================================================================================/
+
+
+
+
+
++============+
+| Ejemplos   |
++============+==================================================================================fpcf===\
+# +----------------------------------------------------------------------------
+# | Script PowerShell: Muestra Logs en Color
+# +----------------------------------------------------------------------------
+# | DESCRIPCIÓN...: Genera un archivo de log ficticio y lo muestra en un formulario
+# |                 coloreando sus líneas según el contenido.
+# |                 
+# | Fecha Creación: 3 marzo 2021
+# | Modificaciones: 
+# +--------------------------------------------------------------Paco Carrión-- 
+
+
+
+
+function GeneraLeeLog(){
+# ·············································································
+# · Función: GeneraLeeLog
+# ·············································································
+# · DESCRIPCIÓN...: Genera el LOG ficticio y luego lo carga en el formulario
+# ·                 coloreando sus líneas según el contenido. Los colores son:
+# ·                 AZUL si le linea contiene la cadena "INFO"
+# ·                 ROJO si la línea contiene la cadena "ERROR"
+# ·                 VERDE si la línea contiene la cadena "CORRECTO"
+# ·                 NEGRO en los restantes casos
+# ·                 Se pone en una funcion independiente para poder llamarlo
+# ·                 al pulsar el botón, y al abrir el formulario
+# ·                 
+# · Sintaxis......: GeneraLeeLog
+# · Ejemplo.......: GeneraLeeLog
+# · Comentario....: 
+# · Dependencias..: 
+# · 
+# · Fecha Creación: 3 marzo 2021
+# · Modificaciones: 
+# ·                 
+# ····························································Paco Carrión·····
+
+    # Cargamos en una tabla los supuestos textos del log que luego se graban
+    # --------------------------------------------------------------------------
+    $TextoDelLog = "[CORRECTO] - Operación realizada con éxito.", 
+                   "[ERROR] - La operación ha sido errónea.",
+                   "[INFO] - Se ha realizado una operación de la que se informa.",
+                   "[CORRECTO] - Operación realizada con éxito.", 
+                   "[ERROR] - La operación ha sido errónea.",
+                   "[ERROR] - La operación ha sido errónea.",
+                   "[INFO] - Se ha realizado una operación de la que se informa.",
+                   "[INFO] - Se ha realizado una operación de la que se informa.",
+                   "[CORRECTO] - Operación realizada con éxito."
+
+    # Grabamos las líneas en el archivo que simula ser una archivo LOG.
+    # Se inlcluye fecha y hora al principio de la línea.
+    # --------------------------------------------------------------------
+
+    "FECHA      HORA         DESCRIPCIÓN" | Out-File .\ArchivoLog.txt -Encoding Default
+    "---------- --------  -  " + "-" * 60 | Out-File .\ArchivoLog.txt -Encoding Default -Append 
+
+    ForEach ($Linea in $TextoDelLog)
+    {
+        $($(Get-Date)).ToString("dd-MM-yyyy HH:mm:ss  -  ")  + $Linea | Out-File .\ArchivoLog.txt -Append -Encoding Default
+    } 
+
+
+    # Se lee el archivo de texto línea a línea para agregarla al control RichTextBox
+    # --------------------------------------------------------------------------------
+    $CuadoTextoRTF.Text = ""
+    $Codificacion = [Text.Encoding]::Default
+    $ArvhivoALeer = New-Object IO.StreamReader ("ArchivoLog.txt", $Codificacion)
+    while (!($ArvhivoALeer.EndOfStream)){
+        $LineaTexto = $ArvhivoALeer.ReadLine()
+        
+        # Se elige el color para el texto según su contenido.
+        # ---------------------------------------------------
+        Switch ($LineaTexto)
+        {
+            {$_ -match  "error"} {$CuadoTextoRTF.SelectionColor = 'red'}
+            {$_ -match  "info"} {$CuadoTextoRTF.SelectionColor = 'blue'}
+            {$_ -match  "correcto"} {$CuadoTextoRTF.SelectionColor = 'green'}
+        } 
+        $CuadoTextoRTF.AppendText("$LineaTexto `n")
+        Write-Host $LineaTexto
+    }
+    $ArvhivoALeer.Close()
+    $ArvhivoALeer.Dispose()
+}    
+    
+    
+# +----------------------------------------------------------------------------
+# | Generación del formulario
+# +----------------------------------------------------------------------------
+
+Add-Type -AssemblyName System.Windows.Forms
+[System.Windows.Forms.Application]::EnableVisualStyles()
+
+$Formulario1                     = New-Object system.Windows.Forms.Form
+$Formulario1.ClientSize          = New-Object System.Drawing.Point(844,482)
+$Formulario1.text                = "Visor de LOG"
+$Formulario1.TopMost             = $false
+$Formulario1.StartPosition       = 1
+
+$CuadoTextoRTF                   = New-Object System.Windows.Forms.RichTextBox
+$System_Drawing_Point            = New-Object System.Drawing.Point
+$System_Drawing_Point.X          = 20
+$System_Drawing_Point.Y          = 24
+$CuadoTextoRTF.Location          = $System_Drawing_Point
+$CuadoTextoRTF.Name              = "CuadoTextoRTF"
+$System_Drawing_Size             = New-Object System.Drawing.Size
+$System_Drawing_Size.Height      = 381
+$System_Drawing_Size.Width       = 812
+$CuadoTextoRTF.Size              = $System_Drawing_Size
+$CuadoTextoRTF.Font              = New-Object System.Drawing.Font("Consolas",12,1,3,0)
+$CuadoTextoRTF.Text              = ""
+
+$BotonGenerar                    = New-Object system.Windows.Forms.Button
+$BotonGenerar.text               = "Generar / Cargar LOG"
+$BotonGenerar.width              = 247
+$BotonGenerar.height             = 39
+$BotonGenerar.location           = New-Object System.Drawing.Point(91,420)
+$BotonGenerar.Font               = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
+
+$BotonCerar                      = New-Object system.Windows.Forms.Button
+$BotonCerar.text                 = "Cerrar"
+$BotonCerar.width                = 247
+$BotonCerar.height               = 39
+$BotonCerar.location             = New-Object System.Drawing.Point(506,420)
+$BotonCerar.Font                 = New-Object System.Drawing.Font('Microsoft Sans Serif',10)
+
+$Formulario1.controls.AddRange(@($CuadoTextoRTF,$BotonGenerar,$BotonCerar))
+
+$BotonGenerar.Add_Click({ GeneraLeeLog })
+$BotonCerar.Add_Click({ $Formulario1.Close()  })
+
+
+# +----------------------------------------------------------------------------
+# | Código principal del script
+# +----------------------------------------------------------------------------
+Clear-Host
+$Formulario1.ShowDialog()| Out-Null 
++======================================================================================================/

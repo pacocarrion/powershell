@@ -1,0 +1,274 @@
+  ************************************************************************************
+  *                      Scripts en archivos de texto del manual                     *
+  *                   "DE VISUAL BASIC SCRIPT A POWERSHELL SCRIPT"                   *
+  ************************************************************************************
+  ************************************************************************************
+  * OBJETO.........: Código fuente de los scripts mas destacados del tema            *
+  * Comentarios....: Este archivo facilita hacer un copia/pega que el manual en PDF  *
+  *                  puede dificultar.                                               *
+  * Título.........: De Visual Basic Script a PowerShell Script                      *
+  *                  (C) Francisco P. Carrión Fernández, Málaga 2017 - 2022.         *
+  *                  Registro de la propiedad intelectual en Safe Creative:          *
+  *                  https://www.safecreative.org                                    *
+  *                  Identificador 2106088048052                                     *
+  *                  Fecha registro 08-jun-2021 21:48 UTC                            *
+  * Original en....: https://formacionpacocarrion.wordpress.com                      *
+  * Contacto.......: formacion.paco.carrion@gmail.com                                *
+  * Licencia.......: La misma de la obra de procedencia: Licencia Creative Commons   *
+  *                  Attribution-NonCommercial-NoDerivatives 4.0                     * 
+  ************************************************************************************
+  *                                                     Paco Carrión, Málaga 2022.   *
+  ************************************************************************************
+
+
+
++============+
+|   Tema12   |
++============+==================================================================================fpcf===\
+Const HKCU = &H80000001 'HKEY_CURRENT_USER
+Set ObRegistro = GetObject("winmgmts:!root/default:StdRegProv")
+If ObRegistro.EnumKey(HKCU, "SOFTWARE\Paco Carrión\", SubC) = 0 Then
+    WScript.Echo "La clave existe"
+Else
+    WScript.Echo "La clave no existe"
+End If
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema12   |
++============+==================================================================================fpcf===\
+If (Test-Path "HKCU:\SOFTWARE\Paco Carrión\"){
+    Write-Host "La clave existe"
+}
+else{
+    Write-Host "La clave no existe"
+} 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema12   |
++============+==================================================================================fpcf===\
+On error resume Next 
+Set ObjetoShell = WScript.CreateObject("WScript.Shell") 
+ValorRegistro ="PowerShell"
+Valor = ObjetoShell.regread("HKEY_CURRENT_USER\SOFTWARE\Paco Carrión\" _
+        & ValorRegistro) 
+If err.number Then
+    WScript.Echo "El valor no existe"
+Else
+    WScript.Echo "El valor existe: " & valor
+End If
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema12   |
++============+==================================================================================fpcf===\
+$ValorRegistro = "PowerShell"
+$Valor = (Get-ItemProperty -ErrorAction SilentlyContinue `
+          -Path "HKCU:\SOFTWARE\Paco Carrión\").$ValorRegistro
+If ($Valor){
+    Write-Host "El valor existe: $Valor"
+}
+else{
+    Write-Host "El valor no existe"
+} 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema12   |
++============+==================================================================================fpcf===\
+On Error Resume Next
+Set ObjetoWsh = WScript.CreateObject("WScript.Shell")
+RamaRegistro = "HKEY_CURRENT_USER\SOFTWARE\Paco Carrión\Anterior\Posterior\Última\"
+ObjetoWsh.RegWrite  RamaRegistro,Null, "REG_SZ"
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema12   |
++============+==================================================================================fpcf===\
+$RamaRegistro = "HKCU:\SOFTWARE\Paco Carrión\Anterior\Posterior\Última"
+New-Item -ErrorAction SilentlyContinue `
+         -Path "$RamaRegistro" -Force | Out-Null 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema12   |
++============+==================================================================================fpcf===\
+Set ObjetoWsh = WScript.CreateObject("WScript.Shell")
+RamaRegistro = "HKEY_CURRENT_USER\SOFTWARE\Paco Carrión\Contador"
+ObjetoWsh.RegWrite  RamaRegistro, 1, "REG_DWORD"
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema12   |
++============+==================================================================================fpcf===\
+$RamaRegistro = "HKCU:\SOFTWARE\Paco Carrión\"
+New-ItemProperty -Path $RamaRegistro -Name "Contador" -Value "1" `
+                 -PropertyType Dword -Force `
+                 -ErrorAction SilentlyContinue | Out-Null
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema12   |
++============+==================================================================================fpcf===\
+On Error Resume Next
+Set ObjetoWsh = WScript.CreateObject("WScript.Shell")
+RamaRegistro = "HKEY_CURRENT_USER\SOFTWARE\Paco Carrión\Contador"
+ObjetoWsh.RegDelete  RamaRegistro
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema12   |
++============+==================================================================================fpcf===\
+$RamaRegistro = "HKCU:\SOFTWARE\Paco Carrión\"
+Remove-ItemProperty -LiteralPath $RamaRegistro -Name "Contador" `
+                    -ErrorAction SilentlyContinue | Out-Null 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema12   |
++============+==================================================================================fpcf===\
+On Error Resume Next
+Set ObjetoWsh = WScript.CreateObject("WScript.Shell")
+RamaRegistro = "HKEY_CURRENT_USER\SOFTWARE\Paco Carrión\Anterior\Posterior\Última\"
+ObjetoWsh.RegDelete  RamaRegistro
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema12   |
++============+==================================================================================fpcf===\
+$RamaRegistro = "HKCU:\SOFTWARE\Paco Carrión\Anterior\Posterior\Última"
+Remove-Item -LiteralPath $RamaRegistro `
+            -Recurse `
+            -ErrorAction SilentlyContinue | Out-Null 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema12   |
++============+==================================================================================fpcf===\
+$Origen = "HKCU:\SOFTWARE\Paco Carrión"
+$Destino = "HKCU:\SOFTWARE\Paco Carrión\Anterior"
+Copy-ItemProperty -LiteralPath $Origen `
+                  -Destination $Destino `
+                  -Name Contador `
+                  -ErrorAction SilentlyContinue | Out-Null 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema12   |
++============+==================================================================================fpcf===\
+$Origen =  "HKCU:\SOFTWARE\Paco Carrión\Anterior"
+$Destino = "HKCU:\SOFTWARE\Paco Carrión\Anterior2"
+Copy-Item -LiteralPath $Origen `
+          -Destination $Destino `
+          -Recurse `
+          -ErrorAction SilentlyContinue | Out-Null
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema12   |
++============+==================================================================================fpcf===\
+$Origen = "HKCU:\SOFTWARE\Paco Carrión"
+$Destino = "HKCU:\SOFTWARE\Paco Carrión\Anterior"
+Move-ItemProperty -LiteralPath $Origen `
+                  -Destination $Destino `
+                  -Name Contador `
+                  -ErrorAction SilentlyContinue | Out-Null 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema12   |
++============+==================================================================================fpcf===\
+$Origen =  "HKCU:\SOFTWARE\Paco Carrión\Anterior"
+$Destino = "HKCU:\SOFTWARE\Paco Carrión\Anterior2"
+Move-Item -LiteralPath $Origen `
+          -Destination $Destino `
+          -ErrorAction SilentlyContinue | Out-Null 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema12   |
++============+==================================================================================fpcf===\
+$RamaRegistro = "HKCU:\SOFTWARE\Paco Carrión\Anterior2"
+Rename-ItemProperty -LiteralPath $RamaRegistro `
+                    -Name Contador `
+                    -NewName Contador2 `
+                    -ErrorAction SilentlyContinue | Out-Null 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema12   |
++============+==================================================================================fpcf===\
+$RamaRegistro = "HKCU:\SOFTWARE\Paco Carrión\Anterior2"
+Rename-Item -LiteralPath $RamaRegistro `
+            -NewName "Anterior3" `
+            -ErrorAction SilentlyContinue | Out-Null 
++======================================================================================================/

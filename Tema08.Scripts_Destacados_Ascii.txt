@@ -1,0 +1,233 @@
+  ************************************************************************************
+  *                      Scripts en archivos de texto del manual                     *
+  *                   "DE VISUAL BASIC SCRIPT A POWERSHELL SCRIPT"                   *
+  ************************************************************************************
+  ************************************************************************************
+  * OBJETO.........: Código fuente de los scripts mas destacados del tema            *
+  * Comentarios....: Este archivo facilita hacer un copia/pega que el manual en PDF  *
+  *                  puede dificultar.                                               *
+  * Título.........: De Visual Basic Script a PowerShell Script                      *
+  *                  (C) Francisco P. Carrión Fernández, Málaga 2017 - 2022.         *
+  *                  Registro de la propiedad intelectual en Safe Creative:          *
+  *                  https://www.safecreative.org                                    *
+  *                  Identificador 2106088048052                                     *
+  *                  Fecha registro 08-jun-2021 21:48 UTC                            *
+  * Original en....: https://formacionpacocarrion.wordpress.com                      *
+  * Contacto.......: formacion.paco.carrion@gmail.com                                *
+  * Licencia.......: La misma de la obra de procedencia: Licencia Creative Commons   *
+  *                  Attribution-NonCommercial-NoDerivatives 4.0                     * 
+  ************************************************************************************
+  *                                                     Paco Carrión, Málaga 2022.   *
+  ************************************************************************************
+
+
+
++============+
+|   Tema08   |
++============+==================================================================================fpcf===\
+Function Multiplicar(Numero1, Numero2)
+    Resultado = Numero1 * Numero2
+    WScript.Echo "El resultado es " & Resultado
+End Function 
+
+Multiplicar  4,5
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema08   |
++============+==================================================================================fpcf===\
+Function Multiplicar($Numero1, $Numero2){
+    $Resultado = $Numero1 * $Numero2
+    Write-Host "El resultado es $Resultado"
+}
+
+Multiplicar  4 5 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema08   |
++============+==================================================================================fpcf===\
+Function Multiplicar{
+    Param ($Numero1, $Numero2)
+    $Resultado = $Numero1 * $Numero2
+    Write-Host "El resultado es $Resultado"
+}
+Multiplicar 3 7 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema08   |
++============+==================================================================================fpcf===\
+Function Multiplicar{
+    $Resultado = $args[0] * $args[1]
+    Write-Host "El resultado es $Resultado"
+} 
+Multiplicar 2 9 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema08   |
++============+==================================================================================fpcf===\
+Function Multiplicar{
+    $Resultado = 1
+    ForEach ($Numero in $args){
+        $Resultado *= $Numero 
+    }
+    Write-Host "El resultado es $Resultado"
+}
+
+Multiplicar 2 3 5 10 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema08   |
++============+==================================================================================fpcf===\
+Function Sumar(Numero1, Numero2)
+    Resultado = Numero1 + Numero2
+    Sumar = Resultado
+End Function
+
+WScript.Echo Sumar (7, 8)
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema08   |
++============+==================================================================================fpcf===\
+Function Sumar($Numero1, $Numero2){
+    $Resultado = $Numero1 + $Numero2
+    Return $Resultado
+} 
+
+Write-Host $(Sumar 7 8) 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema08   |
++============+==================================================================================fpcf===\
+function Prueba1
+    WScript.Echo "1 El contenido de nombre es:" & nombre
+    WScript.Echo "2 El contenido de nombre2 es:" &  nombre2
+    Nombre3 = "Bermudo"
+End Function 
+
+function Prueba2
+    Dim nombre 
+    nombre = "Nombre En Función"
+    WScript.Echo "3 El contenido de nombre es:" &  nombre
+    WScript.Echo "4 El contenido de nombre2 es:" &  nombre2
+    Nombre4 = "Ana"
+    Nombre5 = "Josefa"
+    Nombre6 = "María"
+End Function
+
+Nombre = "Francisco"
+Nombre2 = "Juan"
+prueba1
+prueba2
+WScript.Echo "5 El contenido de nombre es:" &  nombre
+WScript.Echo "6 El contenido de nombre2 es:" &  nombre2
+WScript.Echo "7 El contenido de nombre3 es:" &  nombre3
+WScript.Echo "8 El contenido de nombre4 es:" &  nombre4
+WScript.Echo "9 El contenido de nombre5 es:" &  nombre5
+WScript.Echo "10 El contenido de nombre6 es:" &  nombre6
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema08   |
++============+==================================================================================fpcf===\
+function Prueba1{
+    Write-Host "1 El contenido de `$nombre es: $nombre"
+    Write-Host "2 El contenido de `$nombre2 es: $nombre2"
+    $Script:Nombre3 = "Bermudo"
+}
+
+function Prueba2{
+    $nombre = "Nombre En Función"
+    Write-Host "3 El contenido de `$nombre es: $nombre"
+    Write-Host "4 El contenido de `$nombre2 es: $nombre2"
+    $Nombre4 = "Ana"
+    $Global:Nombre5 = "Josefa"
+    Set-Variable -Name Nombre6 -Value "María" -Scope 1
+}
+
+
+$Nombre = "Francisco"
+$Private:Nombre2 = "Juan"
+prueba1
+prueba2
+Write-Host "5 El contenido de `$nombre es: $nombre"
+Write-Host "6 El contenido de `$nombre2 es: $nombre2"
+Write-Host "7 El contenido de `$nombre3 es: $nombre3"
+Write-Host "8 El contenido de `$nombre4 es: $nombre4"
+Write-Host "9 El contenido de `$nombre5 es: $nombre5"
+Write-Host "10 El contenido de `$nombre6 es: $nombre6" 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema08   |
++============+==================================================================================fpcf===\
+Function Factorial(Numero)
+    if (Numero = 0) Then 
+        Factorial = 1
+    Else
+       Factorial = Numero * Factorial(Numero - 1)
+    End If 
+End Function
+
+WScript.Echo Factorial (4)
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema08   |
++============+==================================================================================fpcf===\
+Function Factorial($Numero){
+    if ($Numero -eq 0){
+        return 1
+    }
+    else{
+       Return $Numero * (Factorial $($Numero - 1))
+    }
+}
+
+write-host $(Factorial 4) 
++======================================================================================================/

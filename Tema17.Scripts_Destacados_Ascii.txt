@@ -1,0 +1,190 @@
+  ************************************************************************************
+  *                      Scripts en archivos de texto del manual                     *
+  *                   "DE VISUAL BASIC SCRIPT A POWERSHELL SCRIPT"                   *
+  ************************************************************************************
+  ************************************************************************************
+  * OBJETO.........: Código fuente de los scripts mas destacados del tema            *
+  * Comentarios....: Este archivo facilita hacer un copia/pega que el manual en PDF  *
+  *                  puede dificultar.                                               *
+  * Título.........: De Visual Basic Script a PowerShell Script                      *
+  *                  (C) Francisco P. Carrión Fernández, Málaga 2017 - 2022.         *
+  *                  Registro de la propiedad intelectual en Safe Creative:          *
+  *                  https://www.safecreative.org                                    *
+  *                  Identificador 2106088048052                                     *
+  *                  Fecha registro 08-jun-2021 21:48 UTC                            *
+  * Original en....: https://formacionpacocarrion.wordpress.com                      *
+  * Contacto.......: formacion.paco.carrion@gmail.com                                *
+  * Licencia.......: La misma de la obra de procedencia: Licencia Creative Commons   *
+  *                  Attribution-NonCommercial-NoDerivatives 4.0                     * 
+  ************************************************************************************
+  *                                                     Paco Carrión, Málaga 2022.   *
+  ************************************************************************************
+
+
+
++============+
+|   Tema17   |
++============+==================================================================================fpcf===\
+$ListaEquipos = (Get-ChildItem WSMan:\localhost\Client\TrustedHosts).Value
+write-host "Lista de equipos: $ListaEquipos"
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema17   |
++============+==================================================================================fpcf===\
+Set-Item wsman:\localhost\client\trustedhosts Equipo1 -Concatenate -Force
+Restart-Service WinRM 
+$ListaEquipos = (Get-ChildItem WSMan:\localhost\Client\TrustedHosts).Value
+write-host "Lista de equipos: $ListaEquipos"
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema17   |
++============+==================================================================================fpcf===\
+Set-Item wsman:\localhost\client\trustedhosts equipo -Force
+Set-Item wsman:\localhost\client\trustedhosts "equipo3,equipo4,equipo5" -Concatenate -Force
+Restart-Service WinRM
+$ListaEquipos = (Get-ChildItem WSMan:\localhost\Client\TrustedHosts).Value
+write-host $ListaEquipos
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema17   |
++============+==================================================================================fpcf===\
+Set-Item wsman:\localhost\client\trustedhosts * -Force
+Restart-Service WinRM
+$ListaEquipos = (Get-ChildItem WSMan:\localhost\Client\TrustedHosts).Value
+write-host "Lista de equipos: $ListaEquipos"
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema17   |
++============+==================================================================================fpcf===\
+Clear-Item wsman:\localhost\client\trustedhosts -Force
+Restart-Service WinRM
+$ListaEquipos = (Get-ChildItem WSMan:\localhost\Client\TrustedHosts).Value
+write-host "Lista de equipos: $ListaEquipos"
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema17   |
++============+==================================================================================fpcf===\
+Enter-PSSession -ComputerName serv01 -credential administrador
+Exit-PSsession
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema17   |
++============+==================================================================================fpcf===\
+Invoke-Command -ComputerName serv01 `
+               -ScriptBlock { 
+                   dir e: 
+                   Get-Process 
+               } -credential Administrador
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema17   |
++============+==================================================================================fpcf===\
+New-PSSession -ComputerName Serv01 -Name Sesion01 -credential administrador | Out-Null
+Write-Host "Sesiones tras la creación:"; Get-PSSession
+Disconnect-PSSession -Name Sesion01 | Out-Null
+Write-Host "Sesiones tras la desconexión:"; Get-PSSession
+Connect-PSSession -Name Sesion01 | Out-Null
+Write-Host "Sesiones tras la reconexión:"; Get-PSSession
+Remove-PSSession -Name "Sesion01"  | Out-Null
+Write-Host "Sesiones tras la eliminación:"; Get-PSSession 
+
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema17   |
++============+==================================================================================fpcf===\
+$ObjetoSesion01 = New-PSSession -ComputerName Serv01 -credential administrador
+dir e: 
+Get-Process
+Invoke-Command -ScriptBlock { 
+                   dir e: 
+                   Get-Process 
+               } -Session $ObjetoSesion01
+Remove-PSSession -Session $ObjetoSesion01  | Out-Null
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema17   |
++============+==================================================================================fpcf===\
+$PalabraPaso = ConvertTo-SecureString -String "administrador" -AsPlainText -Force 
+$Intermedio = [System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($PalabraPaso)
+$Texto = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto($Intermedio)
+Write-Host $Texto
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema17   |
++============+==================================================================================fpcf===\
+$Usuario = "administrador"
+$PalabraPaso = ConvertTo-SecureString -String "123" -AsPlainText -Force 
+$Credencial = new-object -typename System.Management.Automation.PSCredential `
+              -argumentlist $Usuario,$PalabraPaso
+$Texto = $Credencial.GetNetworkCredential().Password
+Write-Host "Usuario: $Usuario Contraseña: $Texto"
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema17   |
++============+==================================================================================fpcf===\
+$PalabraPaso = ConvertTo-SecureString -String "123" -AsPlainText -Force 
+$Credencial = new-object -typename System.Management.Automation.PSCredential `
+              -argumentlist "administrador",$PalabraPaso
+$ObjetoSesion01 = New-PSSession -ComputerName Serv01 -credential $Credencial
+
+Invoke-Command -ScriptBlock { 
+                   dir e: 
+                   Get-Process 
+               } -Session $ObjetoSesion01
+Remove-PSSession -Session $ObjetoSesion01  | Out-Null
++======================================================================================================/

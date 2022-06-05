@@ -1,0 +1,389 @@
+  ************************************************************************************
+  *                      Scripts en archivos de texto del manual                     *
+  *                   "DE VISUAL BASIC SCRIPT A POWERSHELL SCRIPT"                   *
+  ************************************************************************************
+  ************************************************************************************
+  * OBJETO.........: Código fuente de los scripts mas destacados del tema            *
+  * Comentarios....: Este archivo facilita hacer un copia/pega que el manual en PDF  *
+  *                  puede dificultar.                                               *
+  * Título.........: De Visual Basic Script a PowerShell Script                      *
+  *                  (C) Francisco P. Carrión Fernández, Málaga 2017 - 2022.         *
+  *                  Registro de la propiedad intelectual en Safe Creative:          *
+  *                  https://www.safecreative.org                                    *
+  *                  Identificador 2106088048052                                     *
+  *                  Fecha registro 08-jun-2021 21:48 UTC                            *
+  * Original en....: https://formacionpacocarrion.wordpress.com                      *
+  * Contacto.......: formacion.paco.carrion@gmail.com                                *
+  * Licencia.......: La misma de la obra de procedencia: Licencia Creative Commons   *
+  *                  Attribution-NonCommercial-NoDerivatives 4.0                     * 
+  ************************************************************************************
+  *                                                     Paco Carrión, Málaga 2022.   *
+  ************************************************************************************
+
+
+
++============+
+|   Tema09   |
++============+==================================================================================fpcf===\
+$Cadena = "Primer texto a escribir"
+$Cadena  > Archivo.txt
+"Segundo texto a escribir" >> Archivo.txt 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema09   |
++============+==================================================================================fpcf===\
+$Cadena = "Primer texto"
+$Cadena  | Out-File .\Archivo2.txt -Encoding ascii
+"Segundo texto" | Out-File Archivo2.txt -Append -Encoding ascii 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema09   |
++============+==================================================================================fpcf===\
+RutaArchivo = "MasTexto.txt"
+Set ObjetoSistemaArchivos = CreateObject("Scripting.FileSystemObject")
+Set ArchivoEscritura= ObjetoSistemaArchivos.OpenTextFile(RutaArchivo,8,True,-2)
+ArchivoEscritura.Write("Este sale:")
+ArchivoEscritura.WriteLine("en la misma línea")
+ArchivoEscritura.WriteLine("Otra linea")
+ArchivoEscritura.close()
+Set ArchivoEscritura = Nothing 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema09   |
++============+==================================================================================fpcf===\
+$RutaArchivo = "MasTexto.txt"
+$Codificacion = [System.Text.Encoding]::default
+$ArchivoEscritura = new-object System.IO.StreamWriter $RutaArchivo,$True,$Codificacion
+$ArchivoEscritura.Write("Este sale:")
+$ArchivoEscritura.WriteLine("en la misma línea")
+$ArchivoEscritura.WriteLine("Otra linea")
+$ArchivoEscritura.Flush()
+$ArchivoEscritura.close()
+$ArchivoEscritura.Dispose() 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema09   |
++============+==================================================================================fpcf===\
+"Línea 1" >  "Log.txt"
+"Línea 2" >> "Log.txt"
+"Línea 3" >> "Log.txt"
+$Texto = Get-Content "Log.txt" -Encoding Unicode
+ForEach ($Linea in $Texto){
+    Write-Host $Linea
+} 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema09   |
++============+==================================================================================fpcf===\
+Set ObjetoSistemaArchivos = CreateObject("Scripting.FileSystemObject")
+Set ArvhivoALeer= ObjetoSistemaArchivos.OpenTextFile("Log.txt",1,false,-1)
+While Not ArvhivoALeer.AtEndOfStream
+    LineaTexto = ArvhivoALeer.ReadLine
+    WScript.Echo LineaTexto
+Wend 
+ArvhivoALeer.Close()
+Set ArvhivoALeer = Nothing 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema09   |
++============+==================================================================================fpcf===\
+$Codificacion = [Text.Encoding]::Unicode
+$ArvhivoALeer = New-Object IO.StreamReader ("Log.txt", $Codificacion)
+while (!($ArvhivoALeer.EndOfStream)){
+    $LineaTexto = $ArvhivoALeer.ReadLine()
+    Write-Host $LineaTexto
+}
+$ArvhivoALeer.Close()
+$ArvhivoALeer.Dispose()
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema09   |
++============+==================================================================================fpcf===\
+Set ObjetoSistemaArchivos = CreateObject("Scripting.FileSystemObject")
+if ObjetoSistemaArchivos.FileExists("Log.txt") Then
+    WScript.Echo "El archivo existe"
+    ObjetoSistemaArchivos.MoveFile  "Log.txt", "LogRenombrado.txt"
+    ObjetoSistemaArchivos.DeleteFile  "LogRenombrado.txt"
+Else
+    WScript.Echo "No existe el archivo"
+End If 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema09   |
++============+==================================================================================fpcf===\
+if (Test-Path "Log.txt"){
+    Write-Host "El archivo existe"
+    Rename-Item "Log.txt" "LogRenombrado.txt"
+    Remove-Item "LogRenombrado.txt"
+}
+else{
+    Write-Host "No existe el archivo"
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema09   |
++============+==================================================================================fpcf===\
+Set ObjetoSistemaArchivos = CreateObject("Scripting.FileSystemObject")
+if ObjetoSistemaArchivos.FolderExists("C:\TEMP") Then
+    WScript.Echo "La carpeta existe"
+Else
+    WScript.Echo "No existe esa carpeta"
+End If 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema09   |
++============+==================================================================================fpcf===\
+if (Test-Path("C:\TEMP")){
+    Write-Host "La carpeta existe"
+} else{
+    Write-Host "No existe esa carpeta"
+} 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema09   |
++============+==================================================================================fpcf===\
+Set ObjetoSistemaArchivos = CreateObject("Scripting.FileSystemObject")
+Set ObjetoCarpeta = ObjetoSistemaArchivos.GetFolder("C:\temp")
+For Each Archivo in ObjetoCarpeta.Files
+    Wscript.Echo Archivo.Name
+Next
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema09   |
++============+==================================================================================fpcf===\
+ForEach ( $Archivo in (Get-ChildItem  -Path "C:\Temp"  -File)){
+    Write-Host $Archivo.Name
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema09   |
++============+==================================================================================fpcf===\
+Set ObjetoSistemaArchivos = CreateObject("Scripting.FileSystemObject")
+Set ObjetoCarpeta = ObjetoSistemaArchivos.GetFolder("C:\temp")
+For Each Carpetas in ObjetoCarpeta.SubFolders
+    Wscript.Echo Carpetas.Name
+Next
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema09   |
++============+==================================================================================fpcf===\
+Foreach ( $Carpetas in (Get-ChildItem  -Path "C:\Temp"  -Directory)){
+    Write-Host $Carpetas.Name
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema09   |
++============+==================================================================================fpcf===\
+Set ObjetoSistemaArchivos = CreateObject("Scripting.FileSystemObject")
+ObjetoSistemaArchivos.CreateFolder("C:\CarpetaNueva") 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema09   |
++============+==================================================================================fpcf===\
+New-Item -ItemType Directory -Path C:\CarpetaNueva -Force:$true | Out-Null 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema09   |
++============+==================================================================================fpcf===\
+Set ObjetoSistemaArchivos = CreateObject("Scripting.FileSystemObject")
+ObjetoSistemaArchivos.GetFolder("C:\CarpetaNueva\").Copy "C:\OtraCarpeta\"
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema09   |
++============+==================================================================================fpcf===\
+Copy-Item C:\CarpetaNueva -Destination "C:\OtraCarpeta" -Recurse  -Force:$true | Out-Null 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema09   |
++============+==================================================================================fpcf===\
+Set ObjetoSistemaArchivos = CreateObject("Scripting.FileSystemObject")
+ObjetoSistemaArchivos.MoveFolder "C:\CarpetaNueva", "C:\OtraCarpeta\CarpetaNueva"
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema09   |
++============+==================================================================================fpcf===\
+Move-Item C:\CarpetaNueva -Destination C:\OtraCarpeta -Force:$true
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema09   |
++============+==================================================================================fpcf===\
+Set ObjetoSistemaArchivos = CreateObject("Scripting.FileSystemObject")
+ObjetoSistemaArchivos.MoveFolder "C:\OtraCarpeta", "C:\Renombrada"
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema09   |
++============+==================================================================================fpcf===\
+Rename-Item -Path C:\OtraCarpeta  c:\Renombrada 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema09   |
++============+==================================================================================fpcf===\
+Set ObjetoSistemaArchivos = CreateObject("Scripting.FileSystemObject")
+ObjetoSistemaArchivos.DeleteFolder "C:\CarpetaNueva"
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema09   |
++============+==================================================================================fpcf===\
+Remove-Item -Path C:\CarpetaNueva -Recurse
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema09   |
++============+==================================================================================fpcf===\
+RutaArchivo = "Recuadros.txt"
+Set ObjetoSistemaArchivos = CreateObject("Scripting.FileSystemObject")
+Codificacion = -1 ' -1 = UNICODE
+Set ArchivoEscritura= ObjetoSistemaArchivos.OpenTextFile(RutaArchivo,2,True,Codificacion)
+ArchivoEscritura.WriteLine(chrw(&H2554)) & String(14, chrw(&H2550) )  & chrw(&H2557)
+ArchivoEscritura.WriteLine(chrw(&H2551) + " Paco Carrión " + chrw(&H2551))
+ArchivoEscritura.WriteLine(chrw(&H255A) + String(14, chrw(&H2550))  + chrw(&H255D))
+ArchivoEscritura.close()
+Set ArchivoEscritura = Nothing 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema09   |
++============+==================================================================================fpcf===\
+$RutaArchivo = "Recuadros.txt"
+$Codificacion = [System.Text.Encoding]::Unicode
+$ArchivoEscritura = new-object System.IO.StreamWriter $RutaArchivo,$False,$Codificacion
+$ArchivoEscritura.WriteLine([char]0x2554 + "$([char]0x2550)" * 14 + [char]0x2557)
+$ArchivoEscritura.WriteLine([char]0x2551 + " Paco Carrión " + [char]0x2551)
+$ArchivoEscritura.WriteLine([char]0x255A + "$([char]0x2550)" * 14 + [char]0x255D)
+$ArchivoEscritura.Flush()
+$ArchivoEscritura.close()
+$ArchivoEscritura.Dispose() 
++======================================================================================================/
+
+
+
+
+

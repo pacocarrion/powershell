@@ -1,0 +1,393 @@
+  ************************************************************************************
+  *                      Scripts en archivos de texto del manual                     *
+  *                   "DE VISUAL BASIC SCRIPT A POWERSHELL SCRIPT"                   *
+  ************************************************************************************
+  ************************************************************************************
+  * OBJETO.........: Código fuente de los scripts mas destacados del tema            *
+  * Comentarios....: Este archivo facilita hacer un copia/pega que el manual en PDF  *
+  *                  puede dificultar.                                               *
+  * Título.........: De Visual Basic Script a PowerShell Script                      *
+  *                  (C) Francisco P. Carrión Fernández, Málaga 2017 - 2022.         *
+  *                  Registro de la propiedad intelectual en Safe Creative:          *
+  *                  https://www.safecreative.org                                    *
+  *                  Identificador 2106088048052                                     *
+  *                  Fecha registro 08-jun-2021 21:48 UTC                            *
+  * Original en....: https://formacionpacocarrion.wordpress.com                      *
+  * Contacto.......: formacion.paco.carrion@gmail.com                                *
+  * Licencia.......: La misma de la obra de procedencia: Licencia Creative Commons   *
+  *                  Attribution-NonCommercial-NoDerivatives 4.0                     * 
+  ************************************************************************************
+  *                                                     Paco Carrión, Málaga 2022.   *
+  ************************************************************************************
+
+
+
++============+
+|   Tema16   |
++============+==================================================================================fpcf===\
+Class COCHE
+    Dim Marca
+    Dim Modelo
+    Dim Potencia
+End Class  
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema16   |
++============+==================================================================================fpcf===\
+Class COCHE{
+    [string] $Marca
+    [string] $Modelo
+    [int]    $Potencia
+} 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema16   |
++============+==================================================================================fpcf===\
+Class COCHE
+    Dim Marca
+    Dim Modelo
+    Dim Potencia
+End Class    
+
+Set Coche1 = New COCHE
+Coche1.Marca = "Seat"
+Coche1.Modelo = "Arosa"
+Coche1.Potencia = 80
+WScript.Echo Coche1.Marca
+WScript.Echo Coche1.Modelo
+WScript.Echo Coche1.Potencia
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema16   |
++============+==================================================================================fpcf===\
+Class COCHE{
+    [string] $Marca
+    [string] $Modelo
+    [int]    $Potencia
+}
+
+$Coche1 = New-Object -TypeName COCHE
+$Coche1.Marca = "Seat"
+$Coche1.Modelo = "Arosa"
+$Coche1.Potencia = 80
+$Coche1 | Format-List * 
++======================================================================================================/
+
+
+
+
++============+
+|   Tema16   |
++============+==================================================================================fpcf===\
+Class Coche{
+    [string] $Marca
+    [string] $Modelo
+    [int]    $Potencia
+}
+
+Class CocheAmpliado : Coche{
+    [string] $Matricula
+}
+$CocheAmpliado1 = [CocheAmpliado]::new()
+$CocheAmpliado1 | Format-List *
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema16   |
++============+==================================================================================fpcf===\
+Class Alumno
+    Dim Nombre
+
+    Function Mayuscula()
+        Mayuscula = UCase (Nombre)
+    End Function 
+
+    Function Minuscula()
+        Minuscula = LCase (Nombre)
+    End Function
+End Class
+
+Set Alumno1 = New Alumno
+Alumno1.Nombre = "PaCo"
+WScript.Echo Alumno1.Nombre
+WScript.Echo Alumno1.Mayuscula()
+WScript.Echo Alumno1.Minuscula()
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema16   |
++============+==================================================================================fpcf===\
+Class Alumno{
+    [string] $Nombre
+
+    [String]Mayuscula(){
+        Return $this.Nombre.ToUpper()
+    }
+
+    [String]Minuscula(){
+        Return $this.Nombre.ToLower()
+    }
+}
+
+$Alumno1=[Alumno]::new()
+$Alumno1.Nombre = "PaCo"
+Write-Host $Alumno1.Nombre
+Write-Host $Alumno1.Mayuscula()
+Write-Host $Alumno1.Minuscula()
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema16   |
++============+==================================================================================fpcf===\
+Class Persona
+    Dim Nombre
+    Public Default Function Iniciar(Cadena)
+        Nombre = UCase(Cadena)
+        Set Iniciar = Me
+    End Function 
+
+End Class
+
+Set Persona1 = (New Persona)("PaCo")
+WScript.Echo Persona1.Nombre
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema16   |
++============+==================================================================================fpcf===\
+Class Persona{
+    [string] $Nombre
+    Persona([string] $Cadena){
+        $This.Nombre = $Cadena.ToUpper()
+    }
+}
+
+$Persona1 = [Persona]::new("PaCo")
+Write-Host $Persona1.Nombre
++======================================================================================================/
+
+
+
+
+
+
++============+
+|   Tema16   |
++============+==================================================================================fpcf===\
+Class Prueba
+    Dim  Cadena
+    Private  Contador
+    ' No admite propiedades estáticas
+    Sub Class_Initialize()
+        Cadena = "Me puedes ver"
+        Contador = 99
+    End Sub 
+End Class
+
+Set Prueba1=(New Prueba)
+WScript.Echo Prueba1.Cadena
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema16   |
++============+==================================================================================fpcf===\
+Class Prueba{
+    [string] $Cadena = "Me puedes ver"
+    [int] Hidden $Contador = 99
+    Static [string] $Palabra = "Soy estática"
+}
+
+Write-Host ([Prueba]::Palabra)
+
+$Prueba1=[Prueba]::new()
+$Prueba1 | Format-List *
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema16   |
++============+==================================================================================fpcf===\
+Class ParaPolimorfismo{
+    [string] Responder( ){
+        Return "No indicó parámetros"
+    }
+    [string] Responder([String] $Cadena ){
+        Return "Envió esta cadena: $Cadena" 
+    }
+
+}
+
+$ParaPolimorfismo1 = [ParaPolimorfismo]::New()
+$ParaPolimorfismo1.Responder()
+$ParaPolimorfismo1.Responder("Hola")
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema16   |
++============+==================================================================================fpcf===\
+Class ParaSumas{
+    [String] $Parametro1; $Parametro2
+    ParaSumas([String]$Cadena1, [String]$CAdena2){
+        $this.Parametro1 = $Cadena1
+        $this.Parametro2 = $CAdena2
+    }    
+    [string]CalculaSuma(){
+        return $null
+    }
+    [void] MuestraSuma(){
+         Write-Host("La suma es: " + $this.CalculaSuma())
+    }
+}
+
+Class SumaCadenas : ParaSumas{
+    SumaCadenas([string]$Parametro1,  [string]$Parametro2)  : Base ($Parametro1,  $Parametro2){
+    }
+    [string]CalculaSuma(){
+        return  ("{0}{1}" -f $this.Parametro1, $this.Parametro2)
+    }
+}
+Class SumaNumeros : ParaSumas{
+    SumaNumeros([string]$Parametro1,  [string]$Parametro2)  : Base ($Parametro1,  $Parametro2){
+    }
+    [string]CalculaSuma(){
+        return  ([int]$this.Parametro1 + [int]$this.Parametro2)
+    }
+}
+
+$ObjetoSumaCadenas = [SumaCadenas]::new("21", "99")
+$ObjetoSumaNumeros = [SumaNumeros]::new("21", "99")
+
+$ObjetoSumaCadenas.MuestraSuma()
+$ObjetoSumaNumeros.MuestraSuma()
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema16   |
++============+==================================================================================fpcf===\
+Class ElNif
+
+    Dim NifCompleto
+    Dim LetraDelNif
+    Dim NumeroDelNif
+    
+    Public Default Function Iniciar(Numero)
+        Const Letras = "TRWAGMYFPDXBNJZSQVHLCKE"        
+        LetraDelNif = Mid(Letras,Numero MOD 23 + 1,1)
+        NumeroDelNif = Numero
+        NifCompleto = NumeroDelNif & LetraDelNif
+        Set Iniciar = Me
+    End Function
+End Class
+Set ElNif1 = (New ElNif)(87654321)
+
+WScript.Echo ElNif1.NifCompleto
+WScript.Echo ElNif1.LetraDelNif
+WScript.Echo ElNif1.NumeroDelNif
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema16   |
++============+==================================================================================fpcf===\
+Class ElNif{
+    Hidden [string] $Letras = "TRWAGMYFPDXBNJZSQVHLCKE"
+    [string] $NifCompleto
+    [string] $LetraDelNif
+    [int] $NumeroDelNif
+
+    ElNif([int] $Numero){
+        $this.LetraDelNif = $This.Letras.Substring($Numero % 23,1)
+        $this.NumeroDelNif =$Numero
+        $this.NifCompleto = [string]$this.NumeroDelNif + $this.LetraDelNif
+    }
+} 
+$ElNif1 = [ElNif]::new(87654321)
+$ElNif1 | Format-List *
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema16   |
++============+==================================================================================fpcf===\
+Class UnaClase{
+    [string] $Cadena = "Hola"
+    [string] $OtraCadena = "amigo lector"
+    [string] $TerceraCadena = "PowerShell"
+}
+
+
+$Prueba1=[UnaClase]::new()
+
+Format-List -InputObject $Prueba1 -Property Cadena, TerceraCadena
+Format-Table -InputObject $Prueba1  -Property Cadena, TerceraCadena
+$Prueba1 | Out-GridView -Title "Propiedades del objeto"
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema16   |
++============+==================================================================================fpcf===\
+Class LaClase{
+    [string] $Texto = "Palabra"
+    [int] $Numero = 99
+    Hidden [string] $TextoFinal = "Fin"
+}
+$Objeto=[LaClase]::new()
+Write-Host $(Get-Member -InputObject  $Objeto -Name Texto, TextoFinal  -Force)
+Write-Host $($Objeto | Get-Member  -MemberType Properties)
++======================================================================================================/

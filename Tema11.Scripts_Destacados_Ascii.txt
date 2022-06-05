@@ -1,0 +1,513 @@
+  ************************************************************************************
+  *                      Scripts en archivos de texto del manual                     *
+  *                   "DE VISUAL BASIC SCRIPT A POWERSHELL SCRIPT"                   *
+  ************************************************************************************
+  ************************************************************************************
+  * OBJETO.........: Código fuente de los scripts mas destacados del tema            *
+  * Comentarios....: Este archivo facilita hacer un copia/pega que el manual en PDF  *
+  *                  puede dificultar.                                               *
+  * Título.........: De Visual Basic Script a PowerShell Script                      *
+  *                  (C) Francisco P. Carrión Fernández, Málaga 2017 - 2022.         *
+  *                  Registro de la propiedad intelectual en Safe Creative:          *
+  *                  https://www.safecreative.org                                    *
+  *                  Identificador 2106088048052                                     *
+  *                  Fecha registro 08-jun-2021 21:48 UTC                            *
+  * Original en....: https://formacionpacocarrion.wordpress.com                      *
+  * Contacto.......: formacion.paco.carrion@gmail.com                                *
+  * Licencia.......: La misma de la obra de procedencia: Licencia Creative Commons   *
+  *                  Attribution-NonCommercial-NoDerivatives 4.0                     * 
+  ************************************************************************************
+  *                                                     Paco Carrión, Málaga 2022.   *
+  ************************************************************************************
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+Set ObjetoShell = WScript.CreateObject("WScript.Shell")
+ObjetoShell.SendKeys "CLS + {ENTER}"
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+Clear-Host 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+WScript.Echo "Esto es un ejemplo."
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+Write-Host "Esto es un ejemplo."  -ForeGroundColor Red -backgroundColor Blue 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+WScript.Echo ("Texto 1")
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+Write-Output "Texto 1" >> Salida.txt 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+WScript.Interactive = True
+WScript.Echo "Mensaje 1"
+wscript.Echo "Mensaje 2"
+wscript.Echo "Mensaje 3"
+
+WScript.Interactive = false
+WScript.Echo "Mensaje 4"
+WScript.Echo "Mensaje 5"
+WScript.Echo "Mensaje 6"
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+$DebugPreference = "Continue"
+Write-Debug "Mensaje 1"
+Write-Debug "Mensaje 2"
+Write-Debug "Mensaje 3"
+
+$DebugPreference = "SilentlyContinue" 
+Write-Debug "Mensaje 4"
+Write-Debug "Mensaje 5"
+Write-Debug "Mensaje 6" 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+Texto = InputBox ("Introduzca un texto")
+WScript.Echo "Usted ha tecleado: " & Texto
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+$Texto = Read-Host "Introduzca un texto"
+Write-Host "Usted ha tecleado: $Texto" 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+$ProgressPreference = "Continue"
+
+for ($Contador = 1; $Contador -le 10; $Contador++) {
+    $Porcentaje = ($Contador * 100) / 10
+    Write-Progress -Activity "Bucle del uno al diez" `
+                   -Status $("Se ha ejecutado " +  `
+                    "$Contador  veces ($Porcentaje %)") `
+                   -PercentComplete $Porcentaje 
+    Start-Sleep 1
+}
+Start-Sleep 5
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+Get-Service |  Out-GridView -Title "Lista de Servicios"
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+[PSCustomObject]$Tabla  = @([PSCustomObject]@{
+              Nombre = 'Antonio García López'
+              Dirección  = 'Calle Real 34, 1-C'
+              Dni = '11111111A'
+          })
+$Tabla += [PSCustomObject]@{
+              Nombre = 'Ana Diosdado Ramírez'
+              Dirección  = 'Avenida de la Luz 40, 7-A'
+              Dni = '22222222B'
+          }
+$Tabla += [PSCustomObject]@{
+              Nombre = 'Amador Fernández Ramírez'
+              Dirección  = 'Calle Lanuza Ruano 67, 3-C'
+              Dni = '33333333C'
+          }
+$Tabla | Out-GridView -Title "Lista de Personal"
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+MsgBox("Hola Mundo.")
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+Add-Type -AssemblyName PresentationFramework
+[System.Windows.MessageBox]::Show('Hola Mundo.') | Out-Null
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+Respuesta = MsgBox ("Responda al error", vbYesNoCancel + _
+                   vbCritical, "Ejemplo de pregunta")
+WScript.Echo Respuesta
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+Add-Type -AssemblyName PresentationFramework
+$Respuesta = [System.Windows.MessageBox]::Show('Responda al error',
+             'Ejemplo de pregunta','YesNoCancel','Error')  
+Write-Host "La respuesta es: $Respuesta" 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+TextoRespueta = InputBox ("Mensaje informativo", _ 
+                        "Título del cuadro","Texto por defecto")
+
+WScript.Echo "Usted ha tecleado: " & TextoRespueta
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+Add-Type -AssemblyName Microsoft.VisualBasic
+
+$TextoRespueta = [Microsoft.VisualBasic.Interaction]::InputBox('Mensaje informativo',
+                 'Título del cuadro', 'Texto por defecto')
+
+Write-Host  "Usted ha tecleado: $TextoRespueta" 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+$NombreFormulario= New-Object Windows.Forms.Form
+$NombreFormulario.ShowDialog() 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+$Formulario= New-Object Windows.Forms.Form
+$Formulario.Text = "Título del Formulario"
+$Formulario.ClientSize = New-Object System.Drawing.Size(300, 200)
+$Formulario.FormBorderStyle = "FixedToolWindow"
+$Formulario.StartPosition = "CenterScreen"
+$Formulario.BackColor = "Yellow"
+$Formulario.ShowDialog() | Out-Null
+$Formulario.Dispose() 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+$Formulario= New-Object Windows.Forms.Form
+$Formulario.Text = "Formulario con botón"
+$Boton = New-Object Windows.Forms.Button
+$Boton.text = "Pulsa aquí"
+$Formulario.Controls.Add($Boton)
+$Formulario.ShowDialog() 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+$Formulario= New-Object Windows.Forms.Form
+$Formulario.Text = "Formulario con botón"
+$Boton = New-Object Windows.Forms.Button
+$Boton.text = "Cerrar formulario"
+$Boton.Location = New-Object System.Drawing.Point(90, 100)
+$Boton.Size = New-Object System.Drawing.Size(100, 50)
+$Boton.add_Click({
+    # Este código se ejecuta al pulsar el botón.
+    Add-Type -AssemblyName PresentationFramework
+    [System.Windows.MessageBox]::Show('Voy a cerrar.')
+    $Formulario.Close()
+})
+$Formulario.Controls.Add($Boton)
+$Formulario.ShowDialog() 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+$Formulario= New-Object Windows.Forms.Form
+$Formulario.Text = "Ejemplo de etiqueta"
+$Etiqueta = New-Object System.Windows.Forms.Label
+$Etiqueta.Text = 'Hola soy una etiqueta de texto'
+$Formulario.Controls.Add($Etiqueta)
+$Formulario.ShowDialog() 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+$Formulario= New-Object Windows.Forms.Form
+$Formulario.Text = "Ejemplo de etiqueta"
+$Etiqueta = New-Object System.Windows.Forms.Label
+$Etiqueta.Text = 'Hola soy una etiqueta de texto'
+$Etiqueta.Font = New-Object System.Drawing.Font("Arial", 12.0, `
+                            [System.Drawing.FontStyle]::Bold)
+$Etiqueta.Location = New-Object System.Drawing.Point(12, 37)
+$Etiqueta.Size = New-Object System.Drawing.Size(260, 100)
+$Etiqueta.ForeColor = "White"
+$Etiqueta.BackColor = "Blue"
+$Etiqueta.TextAlign = "MiddleCenter"
+$Formulario.Controls.Add($Etiqueta)
+$Formulario.ShowDialog() 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+$Formulario= New-Object Windows.Forms.Form
+$CuadroTexto = New-Object System.Windows.Forms.TextBox
+$Formulario.Controls.Add($CuadroTexto)
+$Formulario.ShowDialog()
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+$Formulario= New-Object Windows.Forms.Form
+$CuadroTexto = New-Object System.Windows.Forms.TextBox
+$CuadroTexto.Font = New-Object System.Drawing.Font("Arial", 12.0, `
+                            [System.Drawing.FontStyle]::Bold)
+$CuadroTexto.Location = New-Object System.Drawing.Point(12, 37)
+$CuadroTexto.Size = New-Object System.Drawing.Size(260, 100)
+$CuadroTexto.ForeColor = "White"
+$CuadroTexto.BackColor = "Blue"
+$CuadroTexto.Text = "Modifique este texto"
+$CuadroTexto.TextAlign = "Center"
+$Formulario.Controls.Add($CuadroTexto)
+$Formulario.ShowDialog() 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+$Formulario= New-Object Windows.Forms.Form
+$Formulario.Text = "Multiplicación por 3"
+$Formulario.ClientSize = New-Object System.Drawing.Size(300, 150)
+$Formulario.StartPosition = "CenterScreen"
+
+$Etiqueta = New-Object System.Windows.Forms.Label
+$Etiqueta.Text = 'Introduzca un número'
+$Etiqueta.Location = New-Object System.Drawing.Point(10, 20)
+$Etiqueta.Size = New-Object System.Drawing.Size(280, 30)
+$Etiqueta.BackColor = "Yellow"
+$Etiqueta.TextAlign = "MiddleCenter"
+$Formulario.Controls.Add($Etiqueta)
+
+$CuadroTexto = New-Object System.Windows.Forms.TextBox
+$CuadroTexto.Location = New-Object System.Drawing.Point(10, 60)
+$CuadroTexto.Size = New-Object System.Drawing.Size(280, 10)
+$CuadroTexto.TextAlign = "Center"
+$Formulario.Controls.Add($CuadroTexto)
+
+$Boton = New-Object Windows.Forms.Button
+$Boton.text = "Multiplicar por 3"
+$Boton.Location = New-Object System.Drawing.Point(100, 100)
+$Boton.Size = New-Object System.Drawing.Size(100, 30)
+$Boton.add_Click({
+    $Etiqueta.Text = "$(3 * $CuadroTexto.Text). Entre otro número"
+    $CuadroTexto.text = ""
+    $cuadroTexto.Focus()
+})
+$Formulario.Controls.Add($Boton)
+
+$Formulario.AcceptButton=$Boton
+$Formulario.ShowDialog() | Out-Null 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+$Formulario= New-Object Windows.Forms.Form
+$Formulario.Text = "Cuadro combinado"
+$CuadroCombinado = New-Object System.Windows.Forms.ComboBox
+$CuadroCombinado.Items.Add("Paco")
+$CuadroCombinado.Items.Add("Carrión")
+$Formulario.Controls.Add($CuadroCombinado)
+$Formulario.ShowDialog()
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema11   |
++============+==================================================================================fpcf===\
+Add-Type -AssemblyName System.Windows.Forms
+Add-Type -AssemblyName System.Drawing
+$Formulario= New-Object Windows.Forms.Form
+$Formulario.Text = "Cuadro combinado"
+$CuadroCombinado = New-Object System.Windows.Forms.ComboBox
+$CuadroCombinado.Text = "Despliegue y Seleccione"
+$CuadroCombinado.Items.Add("Paco")
+$CuadroCombinado.Items.Add("Carrión")
+$CuadroCombinado.Sorted = $True
+$CuadroCombinado.Location = New-Object System.Drawing.Point(10, 20)
+$CuadroCombinado.Size = New-Object System.Drawing.Size(230, 30)
+$CuadroCombinado.add_SelectedIndexChanged({
+    Add-Type -AssemblyName PresentationFramework
+    [System.Windows.MessageBox]::Show("Ha seleccionado: " + `
+                        "$($CuadroCombinado.SelectedItem)")
+})
+$Formulario.Controls.Add($CuadroCombinado)
+$Formulario.ShowDialog()
++======================================================================================================/
+
+
+
+
+

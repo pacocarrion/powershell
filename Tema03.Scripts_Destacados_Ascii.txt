@@ -1,0 +1,437 @@
+  ************************************************************************************
+  *                      Scripts en archivos de texto del manual                     *
+  *                   "DE VISUAL BASIC SCRIPT A POWERSHELL SCRIPT"                   *
+  ************************************************************************************
+  ************************************************************************************
+  * OBJETO.........: Código fuente de los scripts mas destacados del tema            *
+  * Comentarios....: Este archivo facilita hacer un copia/pega que el manual en PDF  *
+  *                  puede dificultar.                                               *
+  * Título.........: De Visual Basic Script a PowerShell Script                      *
+  *                  (C) Francisco P. Carrión Fernández, Málaga 2017 - 2022.         *
+  *                  Registro de la propiedad intelectual en Safe Creative:          *
+  *                  https://www.safecreative.org                                    *
+  *                  Identificador 2106088048052                                     *
+  *                  Fecha registro 08-jun-2021 21:48 UTC                            *
+  * Original en....: https://formacionpacocarrion.wordpress.com                      *
+  * Contacto.......: formacion.paco.carrion@gmail.com                                *
+  * Licencia.......: La misma de la obra de procedencia: Licencia Creative Commons   *
+  *                  Attribution-NonCommercial-NoDerivatives 4.0                     * 
+  ************************************************************************************
+  *                                                     Paco Carrión, Málaga 2022.   *
+  ************************************************************************************
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+Nombre = "Paco"
+Edad = 20
+Temperatura = 22.5
+WScript.Echo Nombre
+WScript.Echo Edad
+WScript.Echo Temperatura
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+$Nombre = "Paco"
+$Edad = 20
+$Temperatura = 22.5
+Write-Host $Nombre
+Write-Host $Edad
+Write-Host $Temperatura
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+Const  Cadena = "El número PI es:"
+Const  NumeroPI = 3.141516 
+WScript.Echo Cadena
+WScript.Echo NumeroPI
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+New-Variable  Cadena "El número PI es:" -option readonly
+New-Variable  NumeroPI 3.141516 -option readonly
+Write-Host $Cadena
+Write-Host $NumeroPI
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+Set-PSDebug -Off
+
+New-Variable  Cadena "Esto son letras." 
+Write-Host $Cadena
+
+Set-Variable Cadena "Ahora con otras letras"
+Write-Host $Cadena
+
+Clear-Variable Cadena
+Write-Host $Cadena
+
+Remove-Variable Cadena -Force
+Write-Host $Cadena
+
+Set-PSDebug -strict
+Write-Host $Cadena
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+Dim NumeroEntero
+
+' Forzamos el tipo a INTEGER
+NumeroEntero = CInt(3691)
+WScript.Echo TypeName(NumeroEntero)
+WScript.Echo NumeroEntero
+ 
+' Forzamos el tipo a DOUBLE
+NumeroEntero = CDbl(3691)
+WScript.Echo TypeName(NumeroEntero)
+WScript.Echo NumeroEntero
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+Set-Variable [Int] NumeroEntero
+
+# Forzamos el tipo a INTEGER
+$NumeroEntero = [Int] 3691
+Write-Host $NumeroEntero
+Write-Host $NumeroEntero.GetType()
+
+# Forzamos el tipo a Double
+$NumeroEntero = [Double] 3691
+Write-Host $NumeroEntero
+Write-Host $NumeroEntero.GetType() 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+Numero = 20
+WScript.Echo Numero
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+$Numero = 20
+Write-Host $Numero
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+Numero = 30
+Numero = Numero + 3
+WScript.Echo Numero
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+$Numero = 30
+$Numero += 3
+Write-Host $Numero 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+Numero = 20
+Numero = Numero - 5
+WScript.Echo Numero
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+$Numero = 20
+$Numero -= 5
+Write-Host $Numero 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+Numero = 20
+Numero = Numero * 3
+WScript.Echo Numero
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+$Numero = 20
+$Numero *= 3
+Write-Host $Numero 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+Numero = 30
+Numero = Numero / 3
+WScript.Echo Numero
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+$Numero = 30
+$Numero /= 3
+Write-Host $Numero 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+Numero = 25
+Numero = Numero Mod 10
+WScript.Echo Numero
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+$Numero = 25
+$Numero %= 10
+Write-Host $Numero 
++======================================================================================================/
+
+
+
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+Set ObjetoShell = CreateObject( "WScript.Shell" )
+WScript.Echo ObjetoShell.ExpandEnvironmentStrings( "%SystemRoot%" )
+WScript.Echo ObjetoShell.ExpandEnvironmentStrings( "%OS%" )
+ObjetoShell.run "cmd /c echo %RANDOM% & pause"
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+Write-Host $env:SystemRoot
+Write-Host $env:OS
+Start-Process -FilePath "cmd.exe" -ArgumentList {" /c echo %RANDOM% & pause "}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+Set ObjetoShell = WScript.CreateObject("WScript.Shell")
+For Each Variable In ObjetoShell.Environment("PROCESS")
+    WScript.Echo Variable 
+Next
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+$VariablesDeEntorno = Get-ChildItem Env:
+ForEach ($Variable in $VariablesDeEntorno){
+    Write-Host $Variable.name $Variable.value
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+Set ObjetoShell = WScript.CreateObject("WScript.Shell")
+
+Wscript.Echo "---------------------- Variables de entorno de SISTEMA"
+Set VariablesDeEntorno = ObjetoShell.Environment("SYSTEM")
+For Each Variable In VariablesDeEntorno
+  WScript.Echo Variable 
+Next
+
+Wscript.Echo "---------------------- Variables de entorno de USUARIO"
+Set VariablesDeEntorno = ObjetoShell.Environment("USER")
+For Each Variable In VariablesDeEntorno
+  WScript.Echo Variable 
+Next
+
+Wscript.Echo "---------------------- Variables de entorno de SESIÓN"
+Set VariablesDeEntorno = ObjetoShell.Environment("PROCESS")
+For Each Variable In VariablesDeEntorno
+  WScript.Echo Variable 
+Next
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+Write-Host "---------------------- Variables de entorno de SISTEMA"
+$VariablesDeEntorno = [Environment]::GetEnvironmentVariables("Machine")
+ForEach ($Variable in $VariablesDeEntorno.Keys){
+    Write-Host $Variable $VariablesDeEntorno["$Variable"]
+}
+
+Write-Host "---------------------- Variables de entorno de USUARIO"
+$VariablesDeEntorno = [Environment]::GetEnvironmentVariables("User")
+ForEach ($Variable in $VariablesDeEntorno.Keys){
+    Write-Host $Variable $VariablesDeEntorno["$Variable"]
+}
+
+Write-Host "---------------------- Variables de entorno de SESIÓN"
+$VariablesDeEntorno = [Environment]::GetEnvironmentVariables("PROCESS")
+ForEach ($Variable in $VariablesDeEntorno.Keys){
+    Write-Host $Variable $VariablesDeEntorno["$Variable"]
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+Set ObjetoShell = CreateObject("WScript.Shell")
+ObjetoShell.Environment("SYSTEM").Item("V_E_Sistema") = "Valor-Sistema"
+ObjetoShell.Environment("USER").Item("V_E_Usuario") = "Valor-Usuario"
+ObjetoShell.Environment("PROCESS").Item("V_E_Sesion") = "Valor-Sesión"
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+[Environment]::SetEnvironmentVariable("V_E_Sistema","Valor-Sistema","Machine")
+[Environment]::SetEnvironmentVariable("V_E_Usuario","Valor-Usuario","User")
+[Environment]::SetEnvironmentVariable("V_E_Sesion","Valor-Sesión","PROCESS")
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+ObjetoShell.Environment("SYSTEM").Remove("V_E_Sistema") 
+ObjetoShell.Environment("USER").Remove("V_E_Usuario") 
+ObjetoShell.Environment("PROCESS").Remove("V_E_Sesion")
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema03   |
++============+==================================================================================fpcf===\
+[Environment]::SetEnvironmentVariable("V_E_Sistema",$Null,"Machine")
+[Environment]::SetEnvironmentVariable("V_E_Usuario",$Null,"User")
+[Environment]::SetEnvironmentVariable("V_E_Sesion",$Null,"PROCESS")
++======================================================================================================/

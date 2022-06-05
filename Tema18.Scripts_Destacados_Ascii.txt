@@ -1,0 +1,262 @@
+  ************************************************************************************
+  *                      Scripts en archivos de texto del manual                     *
+  *                   "DE VISUAL BASIC SCRIPT A POWERSHELL SCRIPT"                   *
+  ************************************************************************************
+  ************************************************************************************
+  * OBJETO.........: Código fuente de los scripts mas destacados del tema            *
+  * Comentarios....: Este archivo facilita hacer un copia/pega que el manual en PDF  *
+  *                  puede dificultar.                                               *
+  * Título.........: De Visual Basic Script a PowerShell Script                      *
+  *                  (C) Francisco P. Carrión Fernández, Málaga 2017 - 2022.         *
+  *                  Registro de la propiedad intelectual en Safe Creative:          *
+  *                  https://www.safecreative.org                                    *
+  *                  Identificador 2106088048052                                     *
+  *                  Fecha registro 08-jun-2021 21:48 UTC                            *
+  * Original en....: https://formacionpacocarrion.wordpress.com                      *
+  * Contacto.......: formacion.paco.carrion@gmail.com                                *
+  * Licencia.......: La misma de la obra de procedencia: Licencia Creative Commons   *
+  *                  Attribution-NonCommercial-NoDerivatives 4.0                     * 
+  ************************************************************************************
+  *                                                     Paco Carrión, Málaga 2022.   *
+  ************************************************************************************
+
+
+
++============+
+|   Tema18   |
++============+==================================================================================fpcf===\
+$Tarea = Start-Job -Scriptblock {
+    Start-Sleep 30
+    Get-Process  -ComputerName NombreEquipo
+}
+Write-Host $Tarea.State
+Write-Host "El script continúa aquí."
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema18   |
++============+==================================================================================fpcf===\
+$Variable = "ABCDEFGHI"
+$Tarea = Start-Job -Scriptblock {
+    Param($Variable1, $Variable2)
+    Write-Host "Los valores son: $Variable1 y $Variable2"
+} -ArgumentList $Variable, "1234567" 
+Write-Host "El script continúa aquí."
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema18   |
++============+==================================================================================fpcf===\
+$Tarea = Start-Job -Scriptblock {
+    Start-Sleep 30
+    Get-Process  -ComputerName .
+}
+Get-Job  | Out-GridView
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema18   |
++============+==================================================================================fpcf===\
+$Tarea = Start-Job -Scriptblock {
+    Start-Sleep 30
+    Get-Process  -ComputerName .
+}
+Wait-Job $Tarea   | Out-Null
+$ResultadoTarea = Receive-Job $Tarea
+$ResultadoTarea | Out-GridView
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema18   |
++============+==================================================================================fpcf===\
+$Variable = "ABCDEFGHI"
+
+$Tarea = Start-Job -Scriptblock {
+    Param($Variable1, $Variable2)
+    Write-Host "Los valores son: $Variable1 y $Variable2"
+} -ArgumentList $Variable, "1234567"
+
+Write-Host "El script continúa aquí."
+Wait-Job $Tarea | Out-Null
+Receive-Job $Tarea
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema18   |
++============+==================================================================================fpcf===\
+$Tarea = Start-Job -Scriptblock {
+    Start-Sleep 30
+    Get-Process  -ComputerName .
+}
+
+Stop-Job $Tarea
+Write-Host "El estado de la tarea es: $($Tarea.State)"
+Get-Job  | Out-GridView
+Remove-Job $Tarea
+Get-Job  | Out-GridView
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema18   |
++============+==================================================================================fpcf===\
+Invoke-Command -ComputerName serv01 `
+               -ScriptBlock { 
+                   dir e: 
+                   Get-Process 
+               } -credential Administrador -Asjob  | Out-Null
+Get-Job  | Out-GridView
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema18   |
++============+==================================================================================fpcf===\
+$Ejecutando = $(Get-Job -State Running).Length
+Write-Host  "Tareas en ejecución: $Ejecutando"
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema18   |
++============+==================================================================================fpcf===\
+$Ejecutando = 0
+for ($Contador = 1; $Contador -le 20; $Contador ++){
+    Do {$Ejecutando = $(Get-Job -State Running).Length} While ($Ejecutando -gt 5)
+    Write-Host "Tareas simultáneas: $Ejecutando"
+    $Tarea = Start-Job -Scriptblock {
+        Start-Sleep 10
+        Write-Host $(Get-Date)
+    } 
+}
+$TareasEnSegundoPlano = Get-Job
+ForEach ($Tarea1 in $TareasEnSegundoPlano){
+    Wait-Job $Tarea1.name  | Out-Null
+    Receive-Job $Tarea1.name
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema18   |
++============+==================================================================================fpcf===\
+$Ordenadores = "localhost","localhost","OtroHost","localhost","localhost",
+               "localhost","localhost","OtroHost","localhost","localhost",
+               "localhost","localhost","OtroHost","localhost","localhost",
+               "localhost","localhost","OtroHost","localhost","localhost",
+               "localhost","localhost","OtroHost","localhost","localhost"
+
+$TareasCorriendo = 0
+ForEach ($Ordenador in $Ordenadores) {
+    Do {$TareasCorriendo = $(Get-Job -State Running).Length} While ($TareasCorriendo -gt 7)
+    Write-Host "Tareas Ejecutándose sin terminar: $TareasCorriendo tareas.)"
+    Start-Job -Scriptblock {
+        param($Ordenador)
+        if (Test-Connection -ComputerName  $Ordenador -Count 4 -Quiet){
+            Write-Output "Equipo: $Ordenador - Conectado "
+        }else{
+            Write-Output "Equipo: $Ordenador - ¡¡¡ No encontrado !!!"
+        }
+    }-ArgumentList $Ordenador  | Out-Null
+}
+$TareasEnSegundoPlano = Get-Job
+ForEach ($TareaActual in $TareasEnSegundoPlano){
+    Wait-Job $TareaActual.name   | Out-Null
+    Receive-Job $TareaActual.name
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema18   |
++============+==================================================================================fpcf===\
+$Ordenadores = "localhost","localhost","OtroHost","localhost","localhost",
+               "localhost","localhost","OtroHost","localhost","localhost",
+               "localhost","localhost","OtroHost","localhost","localhost",
+               "localhost","localhost","OtroHost","localhost","localhost",
+               "localhost","localhost","OtroHost","localhost","localhost"
+
+$TareasCorriendo = 0
+ForEach ($Ordenador in $Ordenadores) {
+    Do {$TareasCorriendo = $(Get-Job -State Running).Length} While ($TareasCorriendo -gt 7)
+    Write-Host "Tareas Ejecutándose sin terminar: $TareasCorriendo tareas."
+    $Tarea = Start-Job -Scriptblock {
+        param($Ordenador)
+        if (Test-Connection -ComputerName  $Ordenador -Count 4 -Quiet){
+            Write-Output "Equipo: $Ordenador - Conectado "
+        }else{
+            Write-Output "Equipo: $Ordenador - ¡¡¡ No encontrado !!!"
+        }
+    }-ArgumentList $Ordenador 
+}
+$TareasEnSegundoPlano = Get-Job
+ForEach ($TareaActual in $TareasEnSegundoPlano){
+    Wait-Job $TareaActual   | Out-Null
+    Receive-Job $TareaActual -OutVariable ResultadoTarea | Out-Null
+    Write-Host $ResultadoTarea.ToUpper()
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema18   |
++============+==================================================================================fpcf===\
+$Equipos = Get-ADComputer -Filter * -Properties *
+
+ForEach ($Ordenador in $Equipos) {
+    Do {$TareasCorriendo = $(Get-Job -State Running).Length} While ($TareasCorriendo -gt 20)
+        Start-Job -Scriptblock {
+        param($Ordenador)
+        if (Test-Connection -ComputerName  $Ordenador.cn -Count 4 -Quiet){
+            Write-Output "Equipo: $($Ordenador.cn) - Conectado "
+        }else{
+            Write-Output "Equipo: $($Ordenador.cn) - ¡¡¡ No encontrado !!!"
+        }
+    }-ArgumentList $Ordenador  | Out-Null
+}
+
+$TareasEnSegundoPlano = Get-Job
+ForEach ($TareaActual in $TareasEnSegundoPlano){
+    Wait-Job $TareaActual   | Out-Null
+    Receive-Job $TareaActual -OutVariable ResultadoTarea | Out-Null
+    Write-Host $ResultadoTarea
+}
++======================================================================================================/

@@ -1,0 +1,461 @@
+  ************************************************************************************
+  *                      Scripts en archivos de texto del manual                     *
+  *                   "DE VISUAL BASIC SCRIPT A POWERSHELL SCRIPT"                   *
+  ************************************************************************************
+  ************************************************************************************
+  * OBJETO.........: Código fuente de los scripts mas destacados del tema            *
+  * Comentarios....: Este archivo facilita hacer un copia/pega que el manual en PDF  *
+  *                  puede dificultar.                                               *
+  * Título.........: De Visual Basic Script a PowerShell Script                      *
+  *                  (C) Francisco P. Carrión Fernández, Málaga 2017 - 2022.         *
+  *                  Registro de la propiedad intelectual en Safe Creative:          *
+  *                  https://www.safecreative.org                                    *
+  *                  Identificador 2106088048052                                     *
+  *                  Fecha registro 08-jun-2021 21:48 UTC                            *
+  * Original en....: https://formacionpacocarrion.wordpress.com                      *
+  * Contacto.......: formacion.paco.carrion@gmail.com                                *
+  * Licencia.......: La misma de la obra de procedencia: Licencia Creative Commons   *
+  *                  Attribution-NonCommercial-NoDerivatives 4.0                     * 
+  ************************************************************************************
+  *                                                     Paco Carrión, Málaga 2022.   *
+  ************************************************************************************
+
+
+
++============+
+|   Tema10   |
++============+==================================================================================fpcf===\
+Clear-Host
+$ErrorActionPreference = "Continue"
+echodsaf
+write-host "Punto 1." 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema10   |
++============+==================================================================================fpcf===\
+$ErrorActionPreference = "SilentlyContinue"
+echodsaf
+write-host "Punto 2." 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema10   |
++============+==================================================================================fpcf===\
+On Error Resume Next
+echodsaf
+WScript.Echo "Punto 2." 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema10   |
++============+==================================================================================fpcf===\
+Clear-Host
+$ErrorActionPreference = "Stop"
+echodsaf
+write-host "Punto 3." 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema10   |
++============+==================================================================================fpcf===\
+On Error Goto 0
+echodsaf
+WScript.Echo "Punto 3." 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema10   |
++============+==================================================================================fpcf===\
+Clear-Host
+$ErrorActionPreference = "Inquire"
+echodsaf
+write-host "Punto 4." 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema10   |
++============+==================================================================================fpcf===\
+On Error Resume Next
+Set ObjetoSistemaArchivos = CreateObject("Scripting.FileSystemObject")
+ObjetoSistemaArchivos.DeleteFile "ArchivoInexistente.txt"
+ObjetoSistemaArchivos.DeleteFile "ArchivoInexistente.txt"
+WScript.Echo "Después de los dos borrados"
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema10   |
++============+==================================================================================fpcf===\
+Remove-Item "ArchivoInexistente.txt" -ErrorAction SilentlyContinue
+Remove-Item "ArchivoInexistente.txt" -ErrorAction SilentlyContinue
+Write-Host "Después de los dos borrados"
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema10   |
++============+==================================================================================fpcf===\
+$ErrorActionPreference = "Continue"
+$ErrorView = "NormalView"
+echodsaf
+write-host "Punto 1." 
+
+$ErrorView = "CategoryView"
+echodsaf
+write-host "Punto 2." 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema10   |
++============+==================================================================================fpcf===\
+On Error Resume Next
+Err.Clear
+Cociente = 10/0
+If Err.number <> 0 Then
+    WScript.Echo "Tipo de error: " & Err.Source
+    WScript.Echo "Descripción del error: " &Err.Description
+End if
+WScript.Echo "Aquí finaliza el script"
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema10   |
++============+==================================================================================fpcf===\
+$ErrorActionPreference = "SilentlyContinue"
+$Error.Clear()
+$Cociente = 10/0
+if ($Error.count -gt 0){
+    Write-Host "Tipo de error: $($error[0].CategoryInfo.Reason)"
+    Write-Host "Descripción del error: $($error[0].Exception.Message)"
+}
+Write-Host "Aquí finaliza el script" 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema10   |
++============+==================================================================================fpcf===\
+$ErrorActionPreference = "SilentlyContinue"
+Remove-Item "ArchivoInexistente.txt" -ErrorVariable NuestroError
+$NumeroErrores = $NuestroError.Count
+if ($NumeroErrores -gt 0){
+    Write-Host "Cantidad de errores producidos: [$($NumeroErrores)]"
+    Write-Host "Tipo de error: [$($NuestroError[0].CategoryInfo.Reason)]"
+    Write-Host "Descripción: [$($NuestroError[0].Exception.Message)]"
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema10   |
++============+==================================================================================fpcf===\
+$ErrorActionPreference = "SilentlyContinue"
+Clear-Host
+if ($?){
+    Write-Host "No hubo errores en borrado."
+}
+else{
+    Write-Host "Se ha producido un error en borrado."
+}
+
+echodsaf
+
+if ($?){
+    Write-Host "No hubo errores en echodsaf."
+}
+else{
+    Write-Host "Se ha producido un error en echodsaf."
+} 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema10   |
++============+==================================================================================fpcf===\
+Set WshShell = CreateObject("WScript.Shell")
+CodigoSalida = WshShell.Run("ping NoExiste ",0,True)
+WScript.Echo "El Código de Salida con NoExiste es: " & CodigoSalida
+
+Set WshShell = CreateObject("WScript.Shell")
+CodigoSalida = WshShell.Run("ping LocalHost ",0,True)
+WScript.Echo "El Código de Salida con LocalHost es: " & CodigoSalida
+
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema10   |
++============+==================================================================================fpcf===\
+ping NoExiste  > $null
+Write-Host "El Código de Salida con NoExiste es: $LASTEXITCODE"
+
+ping LocalHost > $null
+Write-Host "El Código de Salida con LocalHost es: $LASTEXITCODE" 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema10   |
++============+==================================================================================fpcf===\
+$ErrorActionPreference = "SilentlyContinue"
+trap{
+    Write-Host "** Se ha producido un error."
+}
+
+Write-Host "1 Antes de los errores"
+SentenciaImposible 
+Write-Host "2 Después del primer error"
+7/0
+Write-Host "3 Después del segundo error" 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema10   |
++============+==================================================================================fpcf===\
+Trap [System.Management.Automation.CommandNotFoundException]{
+    Write-Host " - El Comando no existe [$($Error[0].Exception.GetType().FullName)]"
+    continue
+}
+
+Trap {
+    Write-Host " - Se ha producido la excepción:[$($Error[0].Exception.GetType().FullName)]"
+    continue 
+}
+
+Write-Host "Voy a dividir por 0"
+7/0
+
+Write-Host "Voy a ejecutar un comando inexistente"
+ComandoInexistente 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema10   |
++============+==================================================================================fpcf===\
+Trap {
+    $TipoError = $Error[0].Exception.GetType().Name
+    Switch ($TipoError)
+    {
+        "CommandNotFoundException" {
+             Write-Host "*** El comando no existe."
+             Break
+         }
+        "ItemNotFoundException" {
+             Write-Host "*** El archivo no existe."
+             Break
+         }
+        "RuntimeException" {
+            Write-Host "*** División por cero"
+            Break
+        }
+        default {Write-Host "--- Error, excepción: $TipoError"}
+    }
+    continue 
+}
+
+$ErrorActionPreference = "Stop"
+
+ComandoInexistente
+
+555/0
+
+Remove-Item "C:\ArhivoInexistente"
+
+Get-Content "Y:\Archivo" 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema10   |
++============+==================================================================================fpcf===\
+Try{
+    Write-Host "1 Antes del error."
+    ComandoInexistete
+    Write-Host "2 Después del error."
+}
+catch {
+    Write-Host "3 Se ha producido un error."
+}
+Finally{
+    Write-Host "4 Esto se ejecuta siempre."
+}
+
+Write-Host "5 Esto ya no se controla." 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema10   |
++============+==================================================================================fpcf===\
+Try {
+    Clear-Host
+    Write-Host "Voy a cometer un error."
+    ComandoInexistente
+    Write-Host "He cometido un error."
+}
+catch [System.Management.Automation.CommandNotFoundException]{
+    Write-Host "Error: Comando inexistente."
+}
+
+catch {
+    Write-Host "Error desconocido."
+}
+Write-Host "Voy a finalizar el script." 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema10   |
++============+==================================================================================fpcf===\
+Try {
+    Clear-Host
+    Write-Host "Voy a cometer un error."
+    Get-Content "Y:\ArchivoInexistente" -ErrorAction Stop
+    Write-Host "He cometido un error."
+}
+catch {
+    $TipoError = $Error[0].Exception.GetType().Name
+    Switch ($TipoError)
+    {
+        "CommandNotFoundException" {
+             Write-Host "*** El comando no existe."
+             Break
+         }
+        "DriveNotFoundException" {
+             Write-Host "*** La unidad no existe."
+             Break
+         }
+        "RuntimeException" {
+            Write-Host "*** División por cero"
+            Break
+        }
+        default {Write-Host "--- Error, excepción: $TipoError"}
+    }
+}
+Write-Host "Voy a finalizar el script." 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema10   |
++============+==================================================================================fpcf===\
+On Error Resume Next
+
+err.Clear
+Err.Raise 53
+WScript.Echo "--- Error: " & err.Description
+
+err.Clear
+Err.Raise 13
+WScript.Echo "--- Error: " &err.Description
+
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema10   |
++============+==================================================================================fpcf===\
+trap{
+    Write-Host "--- Error: $($Error[0].CategoryInfo.Reason)"
+    Continue
+}
+$Error.Clear()
+Throw [System.IO.FileNotFoundException] "Fichero inexistente"
+
+$Error.Clear()
+Throw [System.Management.Automation.CommandNotFoundException] "Comando Inexistente" 
+
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema10   |
++============+==================================================================================fpcf===\
+write-error [System.Management.Automation.CommandNotFoundException]
+Write-Error -message "Error provocado" 
++======================================================================================================/
+
+
+
+
+

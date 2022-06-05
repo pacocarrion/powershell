@@ -1,0 +1,816 @@
+  ************************************************************************************
+  *                      Scripts en archivos de texto del manual                     *
+  *                   "DE VISUAL BASIC SCRIPT A POWERSHELL SCRIPT"                   *
+  ************************************************************************************
+  ************************************************************************************
+  * OBJETO.........: Código fuente de los scripts mas destacados del tema            *
+  * Comentarios....: Este archivo facilita hacer un copia/pega que el manual en PDF  *
+  *                  puede dificultar.                                               *
+  * Título.........: De Visual Basic Script a PowerShell Script                      *
+  *                  (C) Francisco P. Carrión Fernández, Málaga 2017 - 2022.         *
+  *                  Registro de la propiedad intelectual en Safe Creative:          *
+  *                  https://www.safecreative.org                                    *
+  *                  Identificador 2106088048052                                     *
+  *                  Fecha registro 08-jun-2021 21:48 UTC                            *
+  * Original en....: https://formacionpacocarrion.wordpress.com                      *
+  * Contacto.......: formacion.paco.carrion@gmail.com                                *
+  * Licencia.......: La misma de la obra de procedencia: Licencia Creative Commons   *
+  *                  Attribution-NonCommercial-NoDerivatives 4.0                     * 
+  ************************************************************************************
+  *                                                     Paco Carrión, Málaga 2022.   *
+  ************************************************************************************
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+Set ObjetoSistemaArchivos = CreateObject("Scripting.FileSystemObject")
+Set ArchivoEscritura= ObjetoSistemaArchivos.OpenTextFile("Datos.csv",2,True,0)
+ArchivoEscritura.WriteLine("""Nombre"",""Edad""")
+ArchivoEscritura.WriteLine("""Antonio"",34")
+ArchivoEscritura.WriteLine("""Ana"",40")
+ArchivoEscritura.WriteLine("""Amador"",55")
+ArchivoEscritura.close()
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+$Codificacion = [System.Text.Encoding]::ASCII
+$ArchivoEscritura = new-object System.IO.StreamWriter 'Datos.csv',$False,$Codificacion
+$ArchivoEscritura.WriteLine('"Nombre","Edad"')
+$ArchivoEscritura.WriteLine('"Antonio",34')
+$ArchivoEscritura.WriteLine('"Ana",40')
+$ArchivoEscritura.WriteLine('"Amador",55')
+$ArchivoEscritura.close()
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+Get-Process  | Export-Csv -LiteralPath  ListadoProcesos.csv `
+                          -NoTypeInformation `
+                          -Encoding Unicode `
+                          -Delimiter ";" `
+                          -Append 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+[PSCustomObject]$Tabla  = @([PSCustomObject]@{
+              Nombre = 'Antonio'
+              Edad  = 34
+          })
+$Tabla += [PSCustomObject]@{
+              Nombre = 'Ana'
+              Edad  = 40
+          }
+$Tabla += [PSCustomObject]@{
+              Nombre = 'Amador'
+              Edad  = 55
+          }
+$Tabla | Export-Csv -LiteralPath  Datos.csv `
+                    -NoTypeInformation `
+                    -Encoding ASCII `
+                    -Delimiter ";" `
+                    -Append 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+$Tabla = Import-Csv -LiteralPath   Datos.csv `
+                    -Delimiter ";"  `
+                    -Encoding ASCII
+ForEach ($Linea in $Tabla){
+    ForEach ($Campo in $Linea.PSObject.Properties){
+        Write-Host $("$($Campo.Name): $($Campo.Value)")
+    }   
+    Write-Host
+} 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+ArchivoMDB = "Ejemplo.MDB"
+Set ObjADO = CreateObject("ADOX.Catalog")
+ObjADO.Create "Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" & ArchivoMDB    
+ObjADO.ActiveConnection.Close()
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+$ArchivoMDB = "Ejemplo.MDB"  
+$ObjADO = New-Object -ComObject ‘ADOX.Catalog’
+$ObjADO.Create("Provider=Microsoft.Jet.OLEDB.4.0; Data Source=$ArchivoMDB")
+$ObjADO.ActiveConnection.Close() 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+ArchivoMDB = "Ejemplo.MDB"
+Set Conexion = CreateObject("ADODB.Connection")
+Conexion.Open("Provider = Microsoft.Jet.OLEDB.4.0;Data Source=" & ArchivoMDB)
+Conexion.Execute "Create Table Tabla(Contador Counter PRIMARY KEY, " & _
+         "Fecha Date, Entero Integer, Texto Text(100), TextoGrande Text)"
+Conexion.Close
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+$ArchivoMDB = "Ejemplo.MDB"  
+$Conexion = New-Object -ComObject ADODB.Connection
+$Conexion.Open("Provider = Microsoft.Jet.OLEDB.4.0;Data Source=$ArchivoMDB")
+$Conexion.Execute('Create Table Tabla(Contador Counter PRIMARY KEY, 
+          Fecha Date, Entero Integer, Texto Text(100), TextoGrande Text)')
+$Conexion.Close() 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+ArchivoMDB = "Ejemplo.MDB"
+Set Conexion = CreateObject("ADODB.Connection")
+Conexion.Open("Provider = Microsoft.Jet.OLEDB.4.0;Data Source=" & ArchivoMDB)
+Set RecordSet =  CreateObject("ADODB.Recordset")
+RecordSet.Open "SELECT * FROM Tabla",Conexion,3,3 ' adOpenStatic = 3 , adLockOptimistic = 3
+RecordSet.AddNew
+RecordSet.Fields.Item("Fecha").value = Now
+RecordSet.Fields.Item("Texto").value = "Prueba de texto 1"
+RecordSet.AddNew
+RecordSet.Fields.Item("Fecha").value = Now
+RecordSet.Fields.Item("Texto").value = "Prueba de texto 2"
+RecordSet.AddNew
+RecordSet.Fields.Item("Fecha").value = Now
+RecordSet.Fields.Item("Texto").value = "Prueba de texto 3"
+RecordSet.Update
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+$ArchivoMDB = "Ejemplo.MDB"  
+$Conexion = New-Object -ComObject ADODB.Connection
+$Conexion.Open("Provider = Microsoft.Jet.OLEDB.4.0;Data Source=$ArchivoMDB")
+$RecordSet =  New-Object -com "ADODB.Recordset"
+$RecordSet.Open("SELECT * FROM Tabla",$Conexion,3,3) # adOpenStatic = 3 , adLockOptimistic = 3
+$RecordSet.AddNew()
+$RecordSet.Fields.Item("Fecha").value = Get-Date
+$RecordSet.Fields.Item("Texto").value = "Prueba de texto 1"
+$RecordSet.AddNew()
+$RecordSet.Fields.Item("Fecha").value = Get-Date
+$RecordSet.Fields.Item("Texto").value = "Prueba de texto 2"
+$RecordSet.AddNew()
+$RecordSet.Fields.Item("Fecha").value = Get-Date
+$RecordSet.Fields.Item("Texto").value = "Prueba de texto 3"
+$RecordSet.Update() 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+Set Conexion = CreateObject("ADODB.Connection")
+Conexion.Open("Provider = Microsoft.Jet.OLEDB.4.0;Data Source=" & "Ejemplo.MDB")
+Set RecordSet =  CreateObject("ADODB.Recordset")
+RecordSet.Open "SELECT * FROM Tabla",Conexion,3,3 ' adOpenStatic = 3 , adLockOptimistic = 3
+RecordSet.MoveFirst
+While (RecordSet.EOF = False)
+    WScript.Echo
+    WScript.Echo RecordSet.Fields.Item("Fecha").value
+    WScript.Echo RecordSet.Fields.Item("Texto").value
+    RecordSet.MoveNext
+Wend
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+$Conexion = New-Object -ComObject ADODB.Connection
+$Conexion.Open("Provider = Microsoft.Jet.OLEDB.4.0;Data Source=Ejemplo.MDB")
+$RecordSet =  New-Object -com "ADODB.Recordset"
+$RecordSet.Open("SELECT * FROM Tabla",$Conexion,3,3) # adOpenStatic = 3 , adLockOptimistic = 3
+$RecordSet.MoveFirst()
+While ($RecordSet.EOF -eq $false){
+    Write-Host
+    Write-Host $RecordSet.Fields.Item("Fecha").value
+    Write-Host $RecordSet.Fields.Item("Texto").value
+    $RecordSet.MoveNext()
+} 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+Set Conexion = CreateObject("ADODB.Connection")
+Conexion.Open("Provider = Microsoft.Jet.OLEDB.4.0;Data Source=" & "Ejemplo.MDB")
+Set RecordSet =  CreateObject("ADODB.Recordset")
+RecordSet.Open "SELECT * FROM Tabla",Conexion,3,3 ' adOpenStatic = 3 , adLockOptimistic = 3
+RecordSet.MoveFirst
+RecordSet.Find("Contador = 2")
+if RecordSet.EOF Then
+    WScript.Echo "No existe el registro"
+Else
+    WScript.Echo "El registro existe"
+    WScript.Echo RecordSet.Fields.Item("Fecha").value
+    WScript.Echo RecordSet.Fields.Item("Texto").value
+End If
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+$Conexion = New-Object -ComObject ADODB.Connection
+$Conexion.Open("Provider = Microsoft.Jet.OLEDB.4.0;Data Source=Ejemplo.MDB")
+$RecordSet =  New-Object -com "ADODB.Recordset"
+$RecordSet.Open("SELECT * FROM Tabla",$Conexion,3,3) # adOpenStatic = 3 , adLockOptimistic = 3
+$RecordSet.MoveFirst()
+$RecordSet.Find("Contador = 2")
+if ($RecordSet.EOF){
+    Write-Host "No existe el registro"
+}
+else{
+    Write-Host "El registro existe"
+    Write-Host $RecordSet.Fields.Item("Fecha").value
+    Write-Host $RecordSet.Fields.Item("Texto").value
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+Set Conexion = CreateObject("ADODB.Connection")
+Conexion.Open("Provider = Microsoft.Jet.OLEDB.4.0;Data Source=" & "Ejemplo.MDB")
+Set RecordSet =  CreateObject("ADODB.Recordset")
+RecordSet.Open "SELECT * FROM Tabla",Conexion,3,3 ' adOpenStatic = 3 , adLockOptimistic = 3
+RecordSet.MoveFirst
+RecordSet.Find("Contador = 3")
+if RecordSet.EOF Then
+    WScript.Echo "No existe el registro"
+Else
+    WScript.Echo "El registro existe y se modifica"
+    RecordSet.Fields.Item("Texto").value = "Modificado"
+    RecordSet.Update
+End If
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+$Conexion = New-Object -ComObject ADODB.Connection
+$Conexion.Open("Provider = Microsoft.Jet.OLEDB.4.0;Data Source=Ejemplo.MDB")
+$RecordSet =  New-Object -com "ADODB.Recordset"
+$RecordSet.Open("SELECT * FROM Tabla",$Conexion,3,3) # adOpenStatic = 3 , adLockOptimistic = 3
+$RecordSet.MoveFirst()
+$RecordSet.Find("Contador = 2")
+if ($RecordSet.EOF){
+    Write-Host "No existe el registro"
+}
+else{
+    Write-Host "El registro existe y se modifica"
+    $RecordSet.Fields.Item("Texto").value = "Modificado"
+    $RecordSet.Update()
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+Set Conexion = CreateObject("ADODB.Connection")
+Conexion.Open("Provider = Microsoft.Jet.OLEDB.4.0;Data Source=" & "Ejemplo.MDB")
+Set RecordSet =  CreateObject("ADODB.Recordset")
+RecordSet.Open "SELECT * FROM Tabla",Conexion,3,3 ' adOpenStatic = 3 , adLockOptimistic = 3
+RecordSet.MoveFirst
+RecordSet.Find("Contador = 2")
+if RecordSet.EOF Then
+    WScript.Echo "No existe el registro"
+Else
+    WScript.Echo "El registro existe y se borra"
+    RecordSet.Delete
+    RecordSet.Update
+End If
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+$Conexion = New-Object -ComObject ADODB.Connection
+$Conexion.Open("Provider = Microsoft.Jet.OLEDB.4.0;Data Source=Ejemplo.MDB")
+$RecordSet =  New-Object -com "ADODB.Recordset"
+$RecordSet.Open("SELECT * FROM Tabla",$Conexion,3,3) # adOpenStatic = 3 , adLockOptimistic = 3
+$RecordSet.MoveFirst()
+$RecordSet.Find("Contador = 2")
+if ($RecordSet.EOF){
+    Write-Host "No existe el registro"
+}
+else{
+    Write-Host "El registro existe y se borra"
+    $RecordSet.Delete()
+    $RecordSet.Update()
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+Set Conexion = CreateObject("ADODB.Connection")
+Conexion.Open("Provider = Microsoft.Jet.OLEDB.4.0;Data Source=Ejemplo.MDB")
+Conexion.Execute("Drop Table Tabla")
+Conexion.Close()
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+$Conexion = New-Object -ComObject ADODB.Connection
+$Conexion.Open("Provider = Microsoft.Jet.OLEDB.4.0;Data Source=Ejemplo.MDB")
+$Conexion.Execute('Drop Table Tabla')
+$Conexion.Close() 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+Set Conexion =  CreateObject("ADODB.Connection")
+Conexion.Open "Driver={MySQL ODBC 8.0.14 ANSI Driver};" & _
+                "Server=localhost;" & _
+                "Port=3306;Data Source=AccesoMySql;" & _
+                "User=root; Password=root;Option=3;" 
+Conexion.Execute("CREATE DATABASE EJEMPLO;") 
+Conexion.Execute("USE EJEMPLO;") 
+Conexion.close
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+$Conexion = New-Object -ComObject ADODB.Connection
+$Conexion.Open("Driver={MySQL ODBC 8.0.14 ANSI Driver};" `
+             + "Server=localhost;" `
+             + "Port=3306;Data Source=AccesoMySql;" `
+             + "User=root; Password=root;Option=3;")
+$Conexion.Execute("CREATE DATABASE EJEMPLO;") | Out-Null
+$Conexion.Execute("USE EJEMPLO;") | Out-Null
+$Conexion.close
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+Set Conexion =  CreateObject("ADODB.Connection")
+Conexion.Open "Driver={MySQL ODBC 8.0.14 ANSI Driver};" & _
+              "Server=localhost;" & _
+              "Port=3306;Data Source=AccesoMySql;" & _
+              "User=root; Password=root;Option=3;" 
+conexion.Execute "Create Table EJEMPLO.Tabla(Contador INT(8)  AUTO_INCREMENT PRIMARY KEY, " & _
+         "Fecha TIMESTAMP, Entero INT, Texto VARCHAR(100), TextoGrande TEXT)"
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+$Conexion = New-Object -ComObject ADODB.Connection
+$Conexion.Open("Driver={MySQL ODBC 8.0.14 ANSI Driver};" `
+             + "Server=localhost;" `
+             + "Port=3306;Data Source=AccesoMySql;" `
+             + "User=root; Password=root;Option=3;")
+$Conexion.Execute("CREATE TABLE EJEMPLO.TABLA(CONTADOR INT(8)  AUTO_INCREMENT PRIMARY KEY, " `
+         + "FECHA TIMESTAMP, ENTERO INT, TEXTO VARCHAR(100), TEXTOGRANDE TEXT)") | Out-Null 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+mysql> DESCRIBE TABLA;
++-------------+--------------+------+-----+---------+----------------+
+| Field       | Type         | Null | Key | Default | Extra          |
++-------------+--------------+------+-----+---------+----------------+
+| Contador    | int(8)       | NO   | PRI | NULL    | auto_increment |
+| Fecha       | timestamp    | YES  |     | NULL    |                |
+| Entero      | int(11)      | YES  |     | NULL    |                |
+| Texto       | varchar(100) | YES  |     | NULL    |                |
+| TextoGrande | text         | YES  |     | NULL    |                |
++-------------+--------------+------+-----+---------+----------------+
+5 rows in set (0.04 sec)
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+Set Conexion =  CreateObject("ADODB.Connection")
+Conexion.Open "Driver={MySQL ODBC 8.0.14 ANSI Driver};" & _
+              "Server=localhost;" & _
+              "Port=3306;Data Source=AccesoMySql;" & _
+              "User=root; Password=root;Option=3;" 
+conexion.Execute "USE EJEMPLO;"
+conexion.Execute ("INSERT INTO `tabla` (`Contador`, `Fecha`, `Entero`, " & _
+                     "`Texto`, `TextoGrande`) VALUES (NULL, NULL, 1001, " &_
+                     "'Prueba de texto 1', NULL);")
+                  
+conexion.Execute ("INSERT INTO `tabla` (`Contador`, `Fecha`, `Entero`, " & _
+                     "`Texto`, `TextoGrande`) VALUES (NULL, NULL, 1002, " &_
+                     "'Prueba de texto 2', NULL);")
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+$Conexion = New-Object -ComObject ADODB.Connection
+$Conexion.Open("Driver={MySQL ODBC 8.0.14 ANSI Driver};" `
+             + "Server=localhost;" `
+             + "Port=3306;Data Source=AccesoMySql;" `
+             + "User=root; Password=root;Option=3;")
+$Conexion.Execute("USE EJEMPLO")
+$Conexion.Execute("INSERT INTO TABLA (CONTADOR, FECHA, ENTERO, "  `
+                  + "TEXTO, TEXTOGRANDE) VALUES (NULL, NULL, 1001, "  `
+                  + "'PRUEBA DE TEXTO 1', NULL);") | Out-Null
+$Conexion.Execute("INSERT INTO TABLA (CONTADOR, FECHA, ENTERO, " `
+                  + "TEXTO, TEXTOGRANDE) VALUES (NULL, NULL, 1002, " `
+                  + "'PRUEBA DE TEXTO 2', NULL);")  | Out-Null 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+mysql> SELECT * FROM TABLA;
++----------+-------+--------+-------------------+-------------+
+| Contador | Fecha | Entero | Texto             | TextoGrande |
++----------+-------+--------+-------------------+-------------+
+|        1 | NULL  |   1001 | PRUEBA DE TEXTO 1 | NULL        |
+|        2 | NULL  |   1002 | PRUEBA DE TEXTO 2 | NULL        |
++----------+-------+--------+-------------------+-------------+
+2 rows in set (0.00 sec)
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+Set Conexion =  CreateObject("ADODB.Connection")
+Set RecordSet =  CreateObject("ADODB.Recordset")
+Conexion.Open "Driver={MySQL ODBC 8.0.14 ANSI Driver};" & _
+              "Server=localhost;" & _
+              "Port=3306;Data Source=AccesoMySql;" & _
+              "User=root; Password=root;Option=3;" 
+RecordSet.open "SELECT * FROM EJEMPLO.TABLA", Conexion
+If RecordSet.EOF Then
+    WScript.Echo "No existen registros con ese criterio"
+Else
+    RecordSet.movefirst
+    While (RecordSet.EOF = False)
+        WScript.Echo RecordSet.Fields.Item("Entero").value
+        WScript.Echo RecordSet.Fields.Item("Texto").value
+        RecordSet.MoveNext
+    Wend
+End If
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+$Conexion = New-Object -ComObject ADODB.Connection
+$RecordSet =  New-Object -com "ADODB.Recordset"
+$Conexion.Open("Driver={MySQL ODBC 8.0.14 ANSI Driver};" `
+             + "Server=localhost;" `
+             + "Port=3306;Data Source=AccesoMySql;" `
+             + "User=root; Password=root;Option=3;")
+$RecordSet.open( "SELECT * FROM EJEMPLO.TABLA", $Conexion)
+If ($RecordSet.EOF){
+    Write-Host "No existen registros con ese criterio"
+}
+Else {
+    While ($RecordSet.EOF -eq $false){
+        Write-Host $RecordSet.Fields.Item("Entero").value
+        Write-Host $RecordSet.Fields.Item("Texto").value
+        $RecordSet.MoveNext()
+    }
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+Set Conexion =  CreateObject("ADODB.Connection")
+Set RecordSet =  CreateObject("ADODB.Recordset")
+Conexion.Open "Driver={MySQL ODBC 8.0.14 ANSI Driver};" & _
+              "Server=localhost;" & _
+              "Port=3306;Data Source=AccesoMySql;" & _
+              "User=root; Password=root;Option=3;"
+RecordSet.open "SELECT * FROM EJEMPLO.TABLA WHERE CONTADOR = 1;", Conexion
+
+If RecordSet.EOF Then
+    WScript.Echo "No existen registros con ese criterio"
+Else
+    WScript.Echo "Entero: " & RecordSet.Fields.Item("Entero").value
+    WScript.Echo "Texto:  " & RecordSet.Fields.Item("Texto").value    
+End If
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+$Conexion = New-Object -ComObject ADODB.Connection
+$RecordSet =  New-Object -com "ADODB.Recordset"
+$Conexion.Open("Driver={MySQL ODBC 8.0.14 ANSI Driver};" `
+             + "Server=localhost;" `
+             + "Port=3306;Data Source=AccesoMySql;" `
+             + "User=root; Password=root;Option=3;")
+$RecordSet.open("SELECT * FROM EJEMPLO.TABLA WHERE CONTADOR = 1 ;", $Conexion) 
+
+If ($RecordSet.EOF){
+    Write-Host "No existen registros con ese criterio"
+}
+Else{
+    Write-Host "Entero: $($RecordSet.Fields.Item("Entero").value)"
+    Write-Host "Texto:  $($RecordSet.Fields.Item("Texto").value)"
+} 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+Set Conexion =  CreateObject("ADODB.Connection")
+Set RecordSet =  CreateObject("ADODB.Recordset")
+Conexion.Open "Driver={MySQL ODBC 8.0.14 ANSI Driver};" & _
+              "Server=localhost;" & _
+              "Port=3306;Data Source=AccesoMySql;" & _
+              "User=root; Password=root;Option=3;"
+RecordSet.open "SELECT * FROM EJEMPLO.TABLA WHERE CONTADOR = 2;", Conexion
+
+If RecordSet.EOF Then
+    WScript.Echo "No existen registros con ese criterio"
+Else
+    Conexion.Execute "UPDATE EJEMPLO.TABLA SET TEXTO = 'Texto modificado' " & _ 
+                     " WHERE EJEMPLO.TABLA.CONTADOR = 2;"
+End If
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+$Conexion = New-Object -ComObject ADODB.Connection
+$RecordSet =  New-Object -com "ADODB.Recordset"
+$Conexion.Open("Driver={MySQL ODBC 8.0.14 ANSI Driver};" `
+             + "Server=localhost;" `
+             + "Port=3306;Data Source=AccesoMySql;" `
+             + "User=root; Password=root;Option=3;")
+$RecordSet.open("SELECT * FROM EJEMPLO.TABLA WHERE CONTADOR = 2;", $Conexion)
+
+If ($RecordSet.EOF){
+    Write-Host "No existen registros con ese criterio"
+}
+Else{
+    $Conexion.Execute("UPDATE EJEMPLO.TABLA SET TEXTO = 'Texto modificado'" `
+                    + "WHERE EJEMPLO.TABLA.CONTADOR = 2;") | Out-Null
+} 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+mysql> select * from tabla;
++----------+-------+--------+-------------------+-------------+
+| CONTADOR | FECHA | ENTERO | TEXTO             | TEXTOGRANDE |
++----------+-------+--------+-------------------+-------------+
+|        1 | NULL  |   1001 | Prueba de texto 1 | NULL        |
+|        2 | NULL  |   1002 | Texto modificado  | NULL        |
++----------+-------+--------+-------------------+-------------+
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+Set Conexion =  CreateObject("ADODB.Connection")
+Set RecordSet =  CreateObject("ADODB.Recordset")
+Conexion.Open "Driver={MySQL ODBC 8.0.14 ANSI Driver};" & _
+              "Server=localhost;" & _
+              "Port=3306;Data Source=AccesoMySql;" & _
+              "User=root; Password=root;Option=3;"
+RecordSet.open "select * from EJEMPLO.tabla where contador = 1;", Conexion
+If RecordSet.EOF Then
+    WScript.Echo "No existen registros con ese criterio"
+Else
+    Conexion.Execute "DELETE FROM TABLA WHERE CONTADOR =  1;"
+End If
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+$Conexion = New-Object -ComObject ADODB.Connection
+$RecordSet =  New-Object -com "ADODB.Recordset"
+$Conexion.Open("Driver={MySQL ODBC 8.0.14 ANSI Driver};" `
+             + "Server=localhost;" `
+             + "Port=3306;Data Source=AccesoMySql;" `
+             + "User=root; Password=root;Option=3;")
+$RecordSet.open("SELECT * FROM EJEMPLO.TABLA WHERE CONTADOR = 1;", $Conexion)
+If ($RecordSet.EOF){
+    Write-Host "No existen registros con ese criterio"
+}
+Else{
+    $Conexion.Execute("DELETE FROM EJEMPLO.TABLA WHERE CONTADOR = 1;")
+} 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+mysql> select * from tabla;
++----------+-------+--------+------------------+-------------+
+| CONTADOR | FECHA | ENTERO | TEXTO            | TEXTOGRANDE |
++----------+-------+--------+------------------+-------------+
+|        2 | NULL  |   1002 | Texto modificado | NULL        |
++----------+-------+--------+------------------+-------------+
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+Set Conexion =  CreateObject("ADODB.Connection")
+Conexion.Open "Driver={MySQL ODBC 8.0.14 ANSI Driver};" & _
+              "Server=localhost;" & _
+              "Port=3306;Data Source=AccesoMySql;" & _
+              "User=root; Password=root;Option=3;" 
+Conexion.Execute("USE EJEMPLO;")
+Conexion.Execute("DROP TABLE TABLA;")
+Conexion.Execute("DROP DATABASE EJEMPLO;")
+Conexion.Close
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema13   |
++============+==================================================================================fpcf===\
+$Conexion = New-Object -ComObject ADODB.Connection
+$Conexion.Open("Driver={MySQL ODBC 8.0.14 ANSI Driver};" `
+             + "Server=localhost;" `
+             + "Port=3306;Data Source=AccesoMySql;" `
+             + "User=root; Password=root;Option=3;")
+$Conexion.Execute("USE EJEMPLO;") | Out-Null
+$Conexion.Execute("DROP TABLE TABLA;") | Out-Null
+$Conexion.Execute("DROP DATABASE EJEMPLO;") | Out-Null
+$Conexion.Close() 
++======================================================================================================/

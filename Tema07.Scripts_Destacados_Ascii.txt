@@ -1,0 +1,591 @@
+  ************************************************************************************
+  *                      Scripts en archivos de texto del manual                     *
+  *                   "DE VISUAL BASIC SCRIPT A POWERSHELL SCRIPT"                   *
+  ************************************************************************************
+  ************************************************************************************
+  * OBJETO.........: Código fuente de los scripts mas destacados del tema            *
+  * Comentarios....: Este archivo facilita hacer un copia/pega que el manual en PDF  *
+  *                  puede dificultar.                                               *
+  * Título.........: De Visual Basic Script a PowerShell Script                      *
+  *                  (C) Francisco P. Carrión Fernández, Málaga 2017 - 2022.         *
+  *                  Registro de la propiedad intelectual en Safe Creative:          *
+  *                  https://www.safecreative.org                                    *
+  *                  Identificador 2106088048052                                     *
+  *                  Fecha registro 08-jun-2021 21:48 UTC                            *
+  * Original en....: https://formacionpacocarrion.wordpress.com                      *
+  * Contacto.......: formacion.paco.carrion@gmail.com                                *
+  * Licencia.......: La misma de la obra de procedencia: Licencia Creative Commons   *
+  *                  Attribution-NonCommercial-NoDerivatives 4.0                     * 
+  ************************************************************************************
+  *                                                     Paco Carrión, Málaga 2022.   *
+  ************************************************************************************
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+Dim EjemploMatriz(10)
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+$EjemploMatriz = New-Object String[] 10
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+MatrizDeNumeros = Array(1,3,8,9)
+Wscript.Echo MatrizDeNumeros(0)
+Wscript.Echo MatrizDeNumeros(3)
+WScript.Echo Join(MatrizDeNumeros," ")
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+$MatrizDeNumeros = 1,3,8,9
+Write-Host $MatrizDeNumeros[0]
+Write-Host $MatrizDeNumeros[3]
+Write-Host $MatrizDeNumeros 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+MatrizDeCadenas = Array("Hola", "Buenos días", "Adiós")
+WScript.Echo MatrizDeCadenas(1)
+WScript.Echo Join(MatrizDeCadenas," ")
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+$MatrizDeCadenas = @("Hola", "Buenos días", "Adiós")
+Write-Host $MatrizDeCadenas[1]
+Write-Host $MatrizDeCadenas
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+Dim MatrizDeNumeros()
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+$MatrizDeNumeros = @()
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+MatrizDeNumeros = Array(11,22,33,44)
+WScript.Echo Join(MatrizDeNumeros," ")
+MatrizDeNumeros(0) = 78
+MatrizDeNumeros(2) = 66
+WScript.Echo Join(MatrizDeNumeros," ")
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+$MatrizDeNumeros = @(11,22,33,44)
+Write-Host $MatrizDeNumeros
+$MatrizDeNumeros[0] = 78
+$MatrizDeNumeros.SetValue(66,2) 
+Write-Host $MatrizDeNumeros 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+Vocales = Array("a","e","i","o","u")
+For Each Letra in Vocales
+    WScript.Echo "Letra: " & Letra
+Next 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+$Vocales = "a","e","i","o","u" 
+ForEach ($Letra in $Vocales)
+{
+    Write-Host "Letra: $Letra"
+} 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+Vocales = Array("a","e")
+ReDim Preserve Vocales(UBound(Vocales) + 1)
+Vocales(UBound(Vocales)) = "i"
+ReDim Preserve Vocales(UBound(Vocales) + 2)
+Vocales(UBound(Vocales)-1) = "o"
+Vocales(UBound(Vocales)) = "u"
+WScript.Echo Join(Vocales," ")
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+$Vocales = "a","e"
+$Vocales += "i"
+$Vocales += "o","u"
+Write-Host $Vocales 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+$Provincias = @("Málaga", "Granada", "Jaén")
+Write-Host $Provincias
+$Provincias = @($Provincias | Where-Object {$_ -ine "granada"})
+Write-Host $Provincias 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+$Provincias = @("Málaga", "Granada", "Jaén")
+Write-Host $Provincias
+$ParaEliminar = $Provincias[0]
+$Provincias = @($Provincias | Where-Object {$_ -ine $ParaEliminar})
+Write-Host $Provincias 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+MatrizDeCadenas = Array ("Lunes", "Martes", "Miércoles")
+
+For Contador =0 to Ubound(MatrizDeCadenas)
+    If StrComp(MatrizDeCadenas(Contador), "lunes",1) = 0 Then
+        WScript.Echo("StrComp: lunes está contenido en la tabla")
+    End If
+Next
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+$MatrizDeCadenas = @("Lunes", "Martes", "Miércoles")
+
+if ($MatrizDeCadenas -Contains("lunes")){
+    Write-Host "-Contains: lunes está contenido en la tabla"
+}
+
+if ($MatrizDeCadenas -CContains("lunes")){
+    Write-Host "-CContains: lunes está contenido en la tabla"
+}
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+Dim Tabla(3,2)
+Tabla(0,0) = "Soy"
+Tabla(2,1) = "Paco"
+For Columna = 0 To 2
+    For Fila = 0 To 1
+        WScript.Echo Tabla(Columna, Fila)
+    Next 
+Next 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+$Tabla = New-Object 'object[,]' 3,2
+$Tabla[0,0] = "Soy"
+$Tabla[2,1] = "Paco"
+For ($Columna = 0; $Columna -le 2; $Columna++){
+    For ($Fila = 0; $Fila -le 1; $Fila++){
+        Write-Host $($Tabla[$Columna, $Fila])
+    }
+} 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+set Capitales = CreateObject("System.Collections.Hashtable")
+Capitales.add "España" , "Madrid"
+Capitales.add "Francia" , "Marsella"
+Capitales.add "Italia","Roma"
+
+WScript.Echo Capitales("España")
+WScript.Echo Capitales("Francia")
+WScript.Echo Capitales("Italia")
+
+Capitales("Francia") = "París"
+WScript.Echo Capitales("Francia")
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+$Capitales = @{}
+$Capitales.Add("España", "Madrid")
+$Capitales.Add("Francia", "Marsella")
+$Capitales.Add("Italia", "Roma")
+
+Write-Host $Capitales["España"]
+Write-Host $Capitales["Francia"]
+Write-Host $Capitales["Italia"]
+
+$Capitales["Francia"] = "París"
+Write-Host $Capitales["Francia"]
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+$Europa = @{"Grecia"="Atenas";"Gran Bretaña"="Londres"}
+$America = @{"Ecuador"= "Quito"; "Brasil" = "Brasilia"}
+
+$Capitales = $Europa + $America
+
+Write-Host $Capitales["Grecia"]
+Write-Host $Capitales["Brasil"]
+
+$Capitales.Remove("Brasil")
+
+Write-Host $Capitales["Brasil"]
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+$Capitales = @{"España" = "Madrid"; "Francia" = "París"; "Italia"="Roma"}
+ForEach ($Clave in $Capitales.Keys){
+    Write-Host $($Clave + " - "  + $Capitales["$Clave"])
+} 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+CadenaVocales = "A-E-I-O-U"
+MatrizVocales = Split(CadenaVocales,"-")
+WScript.Echo MatrizVocales(2)
+WScript.Echo MatrizVocales(1)
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+$CadenaVocales = "A-E-I-O-U"
+$MatrizVocales = $CadenaVocales.Split("-")
+Write-Host $MatrizVocales[2]
+Write-Host $MatrizVocales[1] 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+Capitales = Array("Madrid", "París", "Roma")
+Cadena = Join (Capitales,".")
+WScript.Echo Cadena
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+$Capitales = @("Madrid", "París", "Roma")
+$Cadena = $Capitales -Join(".")
+Write-Host $Cadena 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+$PrimeraMatriz = @("Madrid", "París", "Roma")
+$SegundaMatriz = New-Object string[] 10
+[array]::copy($PrimeraMatriz,$SegundaMatriz,2)
+Write-Host $SegundaMatriz
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+$MatrizDeNumeros = @(1,3,8,9)
+Write-Host $MatrizDeNumeros.Length
+
+$Tabla = New-Object 'object[,]' 3,2
+$Tabla[0,0] = "Soy"
+$Tabla[2,1] = "Paco"
+Write-Host $Tabla.Length 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+$Tabla = New-Object 'object[,]' 5,10
+Write-Host $Tabla.Rank 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+Dim Tabla(5,10)
+WScript.Echo "Elementos en columnas: " & UBound(Tabla,1)
+WScript.Echo "Elementos en filas: " & UBound(Tabla,2)
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+$Tabla = New-Object 'object[,]' 5,10
+Write-Host "Elementos en columnas: $($Tabla.GetLength(0))"
+Write-Host "Elementos en filas: $($Tabla.GetLength(1))" 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+Dim Tabla(5,10)
+Wscript.Echo LBound(Tabla,1) 
+Wscript.Echo UBound(Tabla,1) - 1
+Wscript.Echo LBound(Tabla,2) 
+Wscript.Echo UBound(Tabla,2) - 1
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+$Tabla = New-Object 'object[,]' 5,10
+Write-Host $($Tabla.GetLowerBound(0))
+Write-Host $($Tabla.GetUpperBound(0))
+Write-Host $($Tabla.GetLowerBound(1))
+Write-Host $($Tabla.GetUpperBound(1))
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+$MatrizDeNumeros = @(11,3,84,9,3)
+$MatrizDeNumeros = $MatrizDeNumeros | Sort-Object -unique 
+Write-Host $MatrizDeNumeros 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+Set MatrizDeNumeros=CreateObject("System.Collections.ArrayList")
+MatrizDeNumeros.add  11
+MatrizDeNumeros.add  3
+MatrizDeNumeros.add  84
+MatrizDeNumeros.add  9
+MatrizDeNumeros.sort
+For Each Numero In MatrizDeNumeros
+    WScript.Echo Numero
+Next 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+$MatrizDeNumeros = @()
+$MatrizDeNumeros += 11
+$MatrizDeNumeros += 3
+$MatrizDeNumeros += 84
+$MatrizDeNumeros += 9
+[array]::sort($MatrizDeNumeros)
+ForEach ($Numero in $MatrizDeNumeros){
+    Write-Host $Numero
+} 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+Matriz = Array("z","h","s","g","u","f","W","L","a")
+for Contador = UBound(Matriz) - 1 To 0 Step -1
+    for Elemento= 0 to Contador
+        if UCase(Matriz(Elemento)) > UCase(Matriz(Elemento+1)) then
+            Temporal =Matriz(Elemento+1)
+            Matriz(Elemento+1)=Matriz(Elemento)
+            Matriz(Elemento)=Temporal
+        end if
+    Next
+    WScript.Echo Join(Matriz," ")
+next 
++======================================================================================================/
+
+
+
+
+
++============+
+|   Tema07   |
++============+==================================================================================fpcf===\
+$Matriz = @("z","h","s","g","u","f","W","L","a")
+for ($Contador = $Matriz.GetUpperBound(0) - 1; $Contador -ge 0; $Contador--){
+    for ($Elemento= 0; $Elemento -le $Contador; $Elemento++){
+        if ($Matriz[$Elemento].ToUpper() -gt $Matriz[$Elemento + 1].ToUpper()){
+            $Temporal =$Matriz[$Elemento+1]
+            $Matriz[$Elemento + 1]=$Matriz[$Elemento]
+            $Matriz[$Elemento]=$Temporal
+        }
+    }
+    Write-Host $Matriz
+} 
++======================================================================================================/
